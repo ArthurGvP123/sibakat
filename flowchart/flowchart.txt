@@ -1,0 +1,52 @@
+flowchart TD
+  A[Pengguna membuka SiBakat.id] --> B{Sudah Login?}
+  B -- Tidak --> C[Halaman Login]
+  C -->|Pilih "Sign Up"| D[Halaman Sign Up]
+  D -->|Buat akun (Firebase Auth)| E[Berhasil?]
+  E -- Tidak --> C
+  	C -->|Login (Email/Password)| F[Autentikasi Firebase]
+  	F -->|Sukses| H[Beranda]
+  	F -->|Gagal| C
+  E -- Ya --> H[Masuk ke Beranda]
+	  H[Beranda] --> S1[Sidebar / Navigasi]
+	  S1 --> H1[Data Anak]
+		  H1 --> DA1[Daftar Anak (Firestore users/{uid}/children)]
+		  	DA1 -->|Cari| DAsearch[Filter by Nama]
+		  	DA1 -->|Tambah Anak| DAadd[Form Modal: Nama, Gender, Usia, Nilai Indikator]
+		  	DAadd -->|Validasi + Simpan| DAstore[addDoc Firestore]
+		  	DAstore --> DA1
+				  DA1 -->|Edit| DAedit[Form Modal Edit]
+				  DAedit -->|Validasi+Update| DAupdate[updateDoc Firestore]
+				  DAupdate --> DA1
+					  DA1 -->|Hapus| DAdel[deleteDoc Firestore]
+					  DAdel --> DA1
+						  DA1 -->|Ekspor Excel| DAexp[exportChildrenToExcel (exceljs)]
+						  DA1 -->|Buka Statistik| SA[Halaman Statistik Anak]
+						  SA --> SA1[Ambil Data Anak (getDoc)]
+						  SA1 --> SA2[Hitung Skor (computeScoresAndRecommend)]
+						  SA2 --> SA3[Tabel Nilai & Skor (bar mini)]
+						  SA2 --> SA4[Radar Chart (Recharts)]
+						  SA2 --> SA5[Top-6 Rekomendasi olahraga]
+						  SA3 --> SAexp[Ekspor Excel Statistik]
+						  SA4 --> SAexp
+						  SA5 --> SAexp
+						  SAexp -->|html2canvas Radar → PNG| SAexp2[exceljs: Sheet Profil, Nilai&Skor, Top-6, Radar (img)]
+						  SAexp2 --> SA
+	  S1 --> H2[Komparasi Statistik]
+		  H2 --> K1[Search Anak A & Anak B (autocomplete)]
+		  K1 --> K2{Terpilih dua anak?}
+		  K2 -- Ya --> K3[Hitung Skor A & B]
+		  K3 --> K4[Tampilkan Nilai & Top-6 A]
+		  K3 --> K5[Tampilkan Nilai & Top-6 B]
+		  K3 --> K6[Radar Chart overlay (A=biru, B=merah)]
+		  K2 -- Tidak --> K1
+	  S1 --> H3[Norma Penilaian]
+		  H3 --> N1[Norma Penilaian (kategori usia/gender, tabel interval A–E, algoritma rekomendasi)]
+	  S1 --> H4[Panduan Sport Search]
+		  H4 --> P1[Panduan Pelaksanaan Tes]
+	  S1 --> H5[Petunjuk Penggunaan]
+		  H5 --> PJ1[Petunjuk Penggunaan Aplikasi (alur langkah)]
+	  S1 --> H6[Profil Peneliti]
+		  H6 --> PR1[Profil Pengembang & Pembimbing]
+	  S1 --> L[Logout]
+	  L --> C

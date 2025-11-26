@@ -1,0 +1,26 @@
+// Firestore Security Rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    // Seluruh data berada di bawah /users/{userId}/...
+    match /users/{userId} {
+      // Boleh baca/tulis dokumen profil user (jika ada)
+      allow read, write: if isOwner(userId);
+
+      // Boleh baca/tulis semua sub-koleksi: children, schools, dst.
+      match /{document=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+  }
+}
+
