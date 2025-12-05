@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 *.txt
 package-lock.json
+REDESIGN_NOTES.md
