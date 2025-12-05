@@ -99,12 +99,12 @@ export default function KomparasiStatistik() {
   // Radar data
   const radarData = useMemo(() => {
     const keys = [
+      { label: 'Kecepatan',  k: 'l40m' as const },
+      { label: 'Kelincahan', k: 'lk'   as const },
       { label: 'Koordinasi', k: 'ltbt' as const },
-      { label: 'LBB',        k: 'lbb'  as const },
-      { label: 'LT',         k: 'lt'   as const },
-      { label: 'LK',         k: 'lk'   as const },
-      { label: 'L40M',       k: 'l40m' as const },
-      { label: 'MFT',        k: 'mft'  as const },
+      { label: 'Kekuatan',   k: 'lbb'  as const },
+      { label: 'Power',      k: 'lt'   as const },
+      { label: 'Daya Tahan', k: 'mft'  as const },
     ]
     return keys.map(({ label, k }) => ({
       key: label,
@@ -167,7 +167,7 @@ export default function KomparasiStatistik() {
             </ResponsiveContainer>
           </div>
           <div className="px-4 pb-4 text-xs text-slate-500">
-            Titik: Koordinasi, LBB, LT, LK, L40M, MFT (skala 0–5).
+            Titik: Kecepatan, Kelincahan, Koordinasi, Kekuatan, Power, Daya Tahan (skala 0–5).
           </div>
         </div>
       </div>
@@ -286,12 +286,12 @@ function CompareCard({
                 </tr>
               </thead>
               <tbody className="divide-y">
-                <RowItem label="LTBT (kali)" value={child.ltbt} score={calc.scores.ltbt} colorClass={barColor} />
-                <RowItem label="LBB (m)"     value={child.lbb}  score={calc.scores.lbb}  colorClass={barColor} />
-                <RowItem label="LT (cm)"     value={child.lt}   score={calc.scores.lt}   colorClass={barColor} />
-                <RowItem label="LK (dt)"     value={child.lk}   score={calc.scores.lk}   colorClass={barColor} />
-                <RowItem label="L40M (dt)"   value={child.l40m} score={calc.scores.l40m} colorClass={barColor} />
-                <RowItem label="MFT (Lv.Sh)" value={fmtMft(child.mftLevel, child.mftShuttle)} score={calc.scores.mft} colorClass={barColor} />
+                <RowItem label="Kecepatan (dt)"    value={child.l40m} score={calc.scores.l40m} colorClass={barColor} />
+                <RowItem label="Kelincahan (dt)"   value={child.lk}   score={calc.scores.lk}   colorClass={barColor} />
+                <RowItem label="Koordinasi (kali)" value={child.ltbt} score={calc.scores.ltbt} colorClass={barColor} />
+                <RowItem label="Kekuatan (m)"      value={child.lbb}  score={calc.scores.lbb}  colorClass={barColor} />
+                <RowItem label="Power (cm)"        value={child.lt}   score={calc.scores.lt}   colorClass={barColor} />
+                <RowItem label="Daya Tahan (Lv.Sh)" value={fmtMft(child.mftLevel, child.mftShuttle)} score={calc.scores.mft} colorClass={barColor} />
               </tbody>
             </table>
           </div>

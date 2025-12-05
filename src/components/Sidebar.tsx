@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom'
+// src/components/Sidebar.tsx
+import { Link, NavLink } from 'react-router-dom' // Tambahkan Link
 import { useEffect, useState } from 'react'
 import { signOut } from 'firebase/auth'
 import { auth } from '../firebase'
@@ -26,6 +27,16 @@ function IconUsers(props: React.SVGProps<SVGSVGElement>) {
       <circle cx="9" cy="7" r="4" strokeWidth="1.6" />
       <path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
         d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  )
+}
+// ✅ Icon Baru untuk Tambah Data
+function IconFilePlus(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
+      <path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" 
+        d="M12 4.5v15m7.5-7.5h-15" />
+      <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth="1.6" />
     </svg>
   )
 }
@@ -120,25 +131,28 @@ export default function Sidebar({
 
   return (
     <>
-      {/* overlay */}
+      {/* overlay (z-[100]) */}
       <div
-        className={`fixed inset-0 bg-slate-900/60 backdrop-blur-[2px] transition-opacity z-50 ${
+        className={`fixed inset-0 bg-slate-900/60 backdrop-blur-[2px] transition-opacity z-[100] ${
           open ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
         aria-hidden={!open}
       />
 
-      {/* panel kiri */}
+      {/* panel kiri (z-[100]) */}
       <aside
         role="dialog"
         aria-modal="true"
-        className={`fixed left-0 top-0 h-full w-80 bg-white shadow-xl border-r z-50 transition-transform duration-300 ${
+        className={`fixed left-0 top-0 h-full w-80 bg-white shadow-xl border-r z-[100] transition-transform duration-300 ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="px-4 py-5 border-b-2 border-slate-200">
-          <img src={logoSibakat} alt="SiBakat Logo" className="h-10 w-auto object-contain" />
+          {/* Logo Klik-able */}
+          <Link to="/" onClick={onClose} className="block hover:opacity-80 transition-opacity">
+            <img src={logoSibakat} alt="SiBakat Logo" className="h-10 w-auto object-contain" />
+          </Link>
         </div>
 
         <nav className="p-4 space-y-1">
@@ -150,6 +164,12 @@ export default function Sidebar({
           <NavLink to="/data-anak" className={({isActive}) => `group ${link(isActive)}`} onClick={onClose}>
             <IconUsers className={iconCls} />
             <span>Data Anak</span>
+          </NavLink>
+
+          {/* ✅ Menu Baru: Tambah Data */}
+          <NavLink to="/tambah-data" className={({isActive}) => `group ${link(isActive)}`} onClick={onClose}>
+            <IconFilePlus className={iconCls} />
+            <span>Tambah Data</span>
           </NavLink>
 
           <NavLink to="/komparasi-statistik" className={({isActive}) => `group ${link(isActive)}`} onClick={onClose}>
@@ -194,11 +214,11 @@ export default function Sidebar({
         )}
       </aside>
 
-      {/* Confirmation Dialog - di luar Sidebar */}
+      {/* Confirmation Dialog (z-[110]) */}
       {confirmOpen && (
         <>
-          <div className="fixed inset-0 z-[70] bg-slate-900/60 backdrop-blur-[2px]" onClick={handleCancelLogout} />
-          <div className="fixed inset-0 z-[71] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[110] bg-slate-900/60 backdrop-blur-[2px]" onClick={handleCancelLogout} />
+          <div className="fixed inset-0 z-[111] flex items-center justify-center p-4">
             <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white shadow-xl animate-fadeIn overflow-hidden">
               <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
                 <div className="font-semibold text-slate-800">Konfirmasi Keluar</div>

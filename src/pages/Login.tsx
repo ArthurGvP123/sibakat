@@ -1,9 +1,15 @@
+// src/pages/Login.tsx
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../firebase'
 import { useAuth } from '../contexts/AuthContext'
+import { Mail, Lock, Eye, EyeOff, LogIn, ArrowRight } from 'lucide-react'
+import AnimatedBackground from '../components/AnimatedBackground'
+
+// Import logo untuk watermark
+const logoWatermark = new URL('../assets/Logo Sibakat (Transparent).png', import.meta.url).href
 
 function mapFirebaseError(code?: string) {
   switch (code) {
@@ -19,14 +25,6 @@ function mapFirebaseError(code?: string) {
     default:
       return 'Gagal masuk. Periksa kembali data Anda.'
   }
-}
-
-function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden {...props}>
-      <path strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" d="M20 6L9 17l-5-5" />
-    </svg>
-  )
 }
 
 export default function Login() {
@@ -59,96 +57,119 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center relative overflow-hidden">
-      {/* Animated background shapes */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-80 h-80 rounded-full bg-blue-500/20 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-cyan-500/20 blur-3xl animate-pulse" style={{ animationDelay: '250ms' }} />
-        <div className="absolute top-1/2 left-1/2 w-96 h-96 rounded-full bg-primary/10 blur-3xl animate-pulse" style={{ animationDelay: '500ms' }} />
+    <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-white overflow-hidden font-sans">
+      
+      {/* 1. Background Animasi (Blobs) */}
+      <AnimatedBackground />
+
+      {/* 2. Watermark Logo Sibakat */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+        <img 
+          src={logoWatermark} 
+          alt="Watermark" 
+          className="w-[80vw] max-w-[600px] opacity-[0.03] grayscale brightness-110 animate-pulse" 
+          style={{ animationDuration: '4s' }}
+        />
       </div>
 
-      <div className="w-full max-w-md px-4 sm:px-6 relative z-10 animate-slideInUp">
-        <div className="relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-300" />
-          <div className="relative rounded-3xl border border-white/20 bg-white/10 backdrop-blur-xl p-8 sm:p-10 shadow-2xl">
-              <div className="space-y-6">
-                <div className="text-center space-y-3">
-                  <h2 className="text-3xl font-bold text-white">Masuk ke Akun</h2>
-                  <p className="text-slate-300">Lanjutkan ke dashboard Anda</p>
+      {/* 3. Konten Utama */}
+      <div className="w-full max-w-md px-6 relative z-10 animate-slideInUp">
+        <div className="bg-white/70 backdrop-blur-xl border border-white/60 shadow-2xl rounded-3xl p-8 sm:p-10 ring-1 ring-slate-200/50">
+          
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-4 shadow-sm">
+              <LogIn size={24} />
+            </div>
+            <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight">Selamat Datang</h2>
+            <p className="text-slate-500 mt-2 text-sm">Masuk untuk mengelola data bakat siswa.</p>
+          </div>
+
+          {/* Error Alert */}
+          {error && (
+            <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm flex items-start gap-3 animate-fadeIn">
+              <span className="text-lg">⚠️</span>
+              <p className="font-medium">{error}</p>
+            </div>
+          )}
+
+          {/* Form */}
+          <form className="space-y-5" onSubmit={onSubmit} noValidate>
+            
+            {/* Email Field */}
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-slate-700">Email</label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                  <Mail size={18} />
                 </div>
-
-                {error && (
-                  <div className="rounded-xl bg-red-500/20 text-red-200 border border-red-500/30 px-4 py-3 text-sm backdrop-blur">
-                    <p className="font-medium flex items-center gap-2">
-                      <span className="text-lg">⚠️</span>
-                      {error}
-                    </p>
-                  </div>
-                )}
-
-                <form className="space-y-5" onSubmit={onSubmit} noValidate>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-slate-200">Email</label>
-                    <input
-                      type="email"
-                      className="w-full rounded-xl bg-white/5 border border-white/10 text-white px-4 py-3 placeholder:text-slate-500 focus:outline-none focus:border-blue-400/50 focus:ring-2 focus:ring-blue-400/20 transition"
-                      placeholder="nama@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      autoComplete="email"
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-slate-200">Kata Sandi</label>
-                    <div className="relative">
-                      <input
-                        type={show ? 'text' : 'password'}
-                        className="w-full rounded-xl bg-white/5 border border-white/10 text-white px-4 py-3 pr-12 placeholder:text-slate-500 focus:outline-none focus:border-blue-400/50 focus:ring-2 focus:ring-blue-400/20 transition"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        autoComplete="current-password"
-                        required
-                      />
-                      <button
-                        type="button"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition text-sm font-medium"
-                        onClick={() => setShow(s => !s)}
-                        aria-label={show ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
-                      >
-                        {show ? 'Sembunyikan' : 'Tampilkan'}
-                      </button>
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className={`w-full rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold py-3 px-4 hover:from-blue-600 hover:to-cyan-600 transition duration-300 flex items-center justify-center gap-2 relative overflow-hidden group disabled:opacity-70 disabled:cursor-not-allowed ${busy ? 'opacity-70' : ''}`}
-                    disabled={busy}
-                  >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      {busy ? (
-                        <>
-                          <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                          Memproses…
-                        </>
-                      ) : (
-                        <>Masuk</>
-                      )}
-                    </span>
-                  </button>
-                </form>
-
-                <div className="pt-2 border-t border-white/10 text-center text-sm text-slate-300">
-                  Belum punya akun?{' '}
-                  <Link to="/signup" className="text-blue-300 font-semibold hover:text-blue-200 transition">
-                    Daftar sekarang
-                  </Link>
-                </div>
+                <input
+                  type="email"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm"
+                  placeholder="nama@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               </div>
             </div>
+
+            {/* Password Field */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center">
+                <label className="block text-sm font-semibold text-slate-700">Kata Sandi</label>
+              </div>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                  <Lock size={18} />
+                </div>
+                <input
+                  type={show ? 'text' : 'password'}
+                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                  onClick={() => setShow(!show)}
+                >
+                  {show ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className={`w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 ${busy ? 'opacity-70 cursor-not-allowed' : ''}`}
+              disabled={busy}
+            >
+              {busy ? (
+                <>
+                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Memproses...
+                </>
+              ) : (
+                <>Masuk Sekarang <ArrowRight size={18} /></>
+              )}
+            </button>
+          </form>
+
+          {/* Footer Link */}
+          <div className="mt-8 text-center text-sm text-slate-500">
+            Belum punya akun?{' '}
+            <Link to="/signup" className="text-primary font-bold hover:underline hover:text-blue-700 transition">
+              Daftar di sini
+            </Link>
+          </div>
+        </div>
+
+        {/* Copyright kecil di bawah */}
+        <div className="mt-6 text-center text-xs text-slate-400">
+          &copy; {new Date().getFullYear()} SiBakat.id — Universitas Negeri Semarang
         </div>
       </div>
     </div>

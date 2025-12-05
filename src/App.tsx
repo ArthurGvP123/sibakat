@@ -1,3 +1,4 @@
+// src/App.tsx
 import { Routes, Route, Navigate } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -6,6 +7,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import DataAnak from './pages/DataAnak'
+import TambahData from './pages/TambahData' // <--- IMPORT INI
 import StatistikAnak from './pages/StatistikAnak'
 import KomparasiStatistik from './pages/KomparasiStatistik'
 import NormaPenilaian from './pages/NormaPenilaian'
@@ -31,6 +33,11 @@ export default function App() {
       {/* Proteksi */}
       <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
       <Route path="/data-anak" element={<ProtectedRoute><DataAnak /></ProtectedRoute>} />
+      
+      {/* RUTE BARU UNTUK TAMBAH DAN EDIT */}
+      <Route path="/tambah-data" element={<ProtectedRoute><TambahData /></ProtectedRoute>} />
+      <Route path="/edit-data/:id" element={<ProtectedRoute><TambahData /></ProtectedRoute>} />
+
       <Route path="/data-anak/:id" element={<ProtectedRoute><StatistikAnak /></ProtectedRoute>} />
       <Route path="/komparasi-statistik" element={<ProtectedRoute><KomparasiStatistik /></ProtectedRoute>} />
       <Route path="/norma-penilaian" element={<ProtectedRoute><NormaPenilaian /></ProtectedRoute>} />

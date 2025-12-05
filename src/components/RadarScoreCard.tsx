@@ -56,12 +56,12 @@ const RadarScoreCard = forwardRef<HTMLDivElement, Props>(function RadarScoreCard
 ) {
   const data = useMemo(
     () => [
+      { key: 'Kecepatan',      value: scores.l40m  ?? 0 },
+      { key: 'Kelincahan',     value: scores.lk    ?? 0 },
       { key: 'Koordinasi',     value: scores.ltbt  ?? 0 },
-      { key: 'LBB',            value: scores.lbb   ?? 0 },
-      { key: 'Power Tungkai',  value: scores.lt    ?? 0 },
-      { key: 'Lari 5 m',       value: scores.lk    ?? 0 },
-      { key: 'Lari 40 m',      value: scores.l40m  ?? 0 },
-      { key: 'VO₂ Max',        value: scores.mft   ?? 0 },
+      { key: 'Kekuatan',       value: scores.lbb   ?? 0 },
+      { key: 'Power',          value: scores.lt    ?? 0 },
+      { key: 'Daya Tahan',     value: scores.mft   ?? 0 },
     ],
     [scores]
   )

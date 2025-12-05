@@ -47,13 +47,13 @@ export default function ValueScoreCard({
   values,
   scores,
   className,
-  color = 'blue',               // ⟵ NEW
+  color = 'blue',
 }: {
   title?: string
   values: Values
   scores: Scores
   className?: string
-  color?: 'blue' | 'red'        // ⟵ NEW
+  color?: 'blue' | 'red'
 }) {
   const pal = getPalette(color)
 
@@ -71,13 +71,13 @@ export default function ValueScoreCard({
             </tr>
           </thead>
           <tbody className="divide-y">
-            <RowItem label="Koordinasi (kali)" value={values.ltbt} score={scores.ltbt} pal={pal} />
-            <RowItem label="Lempar Bola Basket (m)" value={values.lbb} score={scores.lbb} pal={pal} />
-            <RowItem label="Power Tungkai (cm)" value={values.lt} score={scores.lt} pal={pal} />
-            <RowItem label="Lari Bolak-Balik 5 m (dt)" value={values.lk} score={scores.lk} pal={pal} />
-            <RowItem label="Lari 40 Meter (dt)" value={values.l40m} score={scores.l40m} pal={pal} />
+            <RowItem label="Kecepatan" value={values.l40m} score={scores.l40m} pal={pal} />
+            <RowItem label="Kelincahan" value={values.lk} score={scores.lk} pal={pal} />
+            <RowItem label="Koordinasi" value={values.ltbt} score={scores.ltbt} pal={pal} />
+            <RowItem label="Kekuatan" value={values.lbb} score={scores.lbb} pal={pal} />
+            <RowItem label="Power" value={values.lt} score={scores.lt} pal={pal} />
             <RowItem
-              label="VO₂ Max (Lv.Sh)"
+              label="Daya Tahan"
               value={fmtMft(values.mftLevel, values.mftShuttle)}
               score={scores.mft}
               pal={pal}

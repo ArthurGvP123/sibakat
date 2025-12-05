@@ -12,3 +12,10 @@ firebase deploy --only "firestore"
 
 https://console.firebase.google.com/project/sibakat-53ef3/overview
 https://sibakat-53ef3.web.app
+
+Koordinasi -> Lempar Tangkap Bola Tenis
+Lempar Bola Basket -> Lempar Bola Basket
+Power Tungkai -> Loncat Tegak
+Lari Bolak-Balik 5m -> Lari Kelincahan
+Lari 40 Meter -> Lari 40 Meter
+Vo Max -> Lari Multitahap

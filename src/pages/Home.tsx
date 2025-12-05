@@ -1,135 +1,212 @@
+// src/pages/Home.tsx
 import { Link } from 'react-router-dom'
+import { 
+  BarChart2, Scale, Search, BookOpen, User, 
+  ArrowRight, FilePlus2, Activity, FileOutput, Database 
+} from 'lucide-react'
 import AppLayout from '../components/Navbar'
 
-/* Ikon monokrom (inline SVG) */
-function IconUsers(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
-      <path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
-        d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" strokeWidth="1.6" />
-      <path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
-        d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
-  )
-}
-function IconChart(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
-      <path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" d="M3 3v18h18" />
-      <path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" d="M7 16l3-4 4 3 5-7" />
-      <circle cx="10" cy="12" r="1.2" fill="currentColor" />
-      <circle cx="14" cy="15" r="1.2" fill="currentColor" />
-      <circle cx="19" cy="8" r="1.2" fill="currentColor" />
-    </svg>
-  )
-}
-function IconScale(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
-      <path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
-        d="M12 3v3m0 0l7 4-7 4-7-4 7-4Zm0 7v8" />
-      <path strokeWidth="1.6" d="M5 17a3 3 0 1 0 6 0H5Zm8 0a3 3 0 1 0 6 0h-6Z" />
-    </svg>
-  )
-}
-function IconSearch(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
-      <circle cx="11" cy="11" r="7" strokeWidth="1.6" />
-      <path strokeWidth="1.6" strokeLinecap="round" d="M21 21l-3.5-3.5" />
-    </svg>
-  )
-}
-function IconBook(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
-      <path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
-        d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4Z" />
-      <path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" d="M8 4v13a3 3 0 0 0 3 3" />
-    </svg>
-  )
-}
-function IconUser(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
-      <circle cx="12" cy="7" r="4" strokeWidth="1.6" />
-      <path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
-        d="M5 21a7 7 0 0 1 14 0" />
-    </svg>
-  )
-}
-
-/* Ukuran judul tombol (sudah dikurangi 1 tingkat) */
-function titleSize() { return 'text-lg lg:text-xl' }
-function descSize() { return 'text-sm' }
-function iconSize() { return 'w-8 h-8' }
+// --- IMPORT LOGO ---
+const logoSibakat = new URL('../assets/Logo Sibakat (Transparent).png', import.meta.url).href
+const logoUnnes = new URL('../assets/Logo UNNES.png', import.meta.url).href
 
 export default function Home() {
-  const items = [
-    { to: '/data-anak',            label: 'Data Anak',            desc: 'Kelola data siswa & asesmen',      span: 'sm:col-span-6 sm:row-span-1', Icon: IconUsers },
-    { to: '/komparasi-statistik',  label: 'Komparasi Statistik',  desc: 'Bandingkan hasil antar indikator', span: 'sm:col-span-6 sm:row-span-1', Icon: IconChart },
-    { to: '/norma-penilaian',      label: 'Norma Penilaian',      desc: 'Atur norma & rentang usia/gender', span: 'sm:col-span-4 sm:row-span-1', Icon: IconScale },
-    { to: '/panduan-sport-search', label: 'Panduan Sport Search', desc: 'Cara memilih cabang olahraga',     span: 'sm:col-span-4 sm:row-span-1', Icon: IconSearch },
-    { to: '/petunjuk-penggunaan',  label: 'Petunjuk Penggunaan',  desc: 'Langkah-langkah memakai aplikasi', span: 'sm:col-span-4 sm:row-span-1', Icon: IconBook },
-    { to: '/profil-peneliti',      label: 'Profil Peneliti',      desc: 'Tentang peneliti & kontak',        span: 'sm:col-span-12 sm:row-span-1', Icon: IconUser },
-  ] as const
+  // Data Menu Utama
+  const menuItems = [
+    { 
+      to: '/data-anak', 
+      label: 'Data Anak', 
+      desc: 'Tabel data siswa & asesmen', 
+      color: 'text-blue-600',
+      bg: 'bg-blue-50',
+      Icon: Database 
+    },
+    { 
+      to: '/komparasi-statistik', 
+      label: 'Komparasi', 
+      desc: 'Bandingkan hasil antar siswa', 
+      color: 'text-purple-600',
+      bg: 'bg-purple-50',
+      Icon: BarChart2 
+    },
+    { 
+      to: '/norma-penilaian', 
+      label: 'Norma Penilaian', 
+      desc: 'Standar nilai & kategori usia', 
+      color: 'text-emerald-600',
+      bg: 'bg-emerald-50',
+      Icon: Scale 
+    },
+    { 
+      to: '/panduan-sport-search', 
+      label: 'Panduan Sport Search', 
+      desc: 'Cara melakukan tes fisik', 
+      color: 'text-orange-600',
+      bg: 'bg-orange-50',
+      Icon: Search 
+    },
+    { 
+      to: '/petunjuk-penggunaan', 
+      label: 'Petunjuk', 
+      desc: 'Cara menggunakan aplikasi', 
+      color: 'text-pink-600',
+      bg: 'bg-pink-50',
+      Icon: BookOpen 
+    },
+    { 
+      to: '/profil-peneliti', 
+      label: 'Profil Peneliti', 
+      desc: 'Tentang pengembang', 
+      color: 'text-slate-600',
+      bg: 'bg-slate-100',
+      Icon: User 
+    },
+  ]
 
   return (
     <AppLayout>
-      <div className="text-center">
-        {/* Judul halaman (shimmer) */}
-        <h1
-          className="
-            text-4xl sm:text-5xl font-extrabold tracking-tight
-            bg-[linear-gradient(90deg,#0f172a,#2563eb,#0f172a)]
-            bg-[length:200%_100%] bg-clip-text text-transparent
-            animate-shimmer
-          "
-        >
-          SELAMAT DATANG DI APLIKASI<span className="text-primary"> SIBAKAT.ID</span>
-        </h1>
+      {/* --- HEADER LOGO SECTION (LEBIH RAPAT) --- */}
+      <div className="flex items-center justify-center gap-3 sm:gap-6 mb-10 pt-4">
+        {/* Logo UNNES di Kiri */}
+        <img
+          src={logoUnnes}
+          alt="Logo UNNES"
+          className="h-16 sm:h-24 w-auto object-contain p-1" 
+        />
+        
+        {/* Logo SiBakat di Kanan */}
+        <img
+          src={logoSibakat}
+          alt="Logo SiBakat"
+          className="h-16 sm:h-24 w-auto object-contain"
+        />
       </div>
 
-      {/* Tambahkan jarak ekstra antara judul dan grid */}
-      <div
-        className="
-          mt-10 sm:mt-10 grid gap-6
-          grid-cols-1
-          sm:grid-cols-12
-          auto-rows-[140px] lg:auto-rows-[160px]
-        "
-      >
-        {items.map(({ to, label, desc, span, Icon }) => (
-          <Link
-            key={to}
-            to={to}
-            className={[
-              'group relative overflow-hidden h-full',
-              'card glass p-5',
-              'hover:shadow-lg hover:ring-2 ring-primary/20 transition',
-              span
-            ].join(' ')}
-          >
-            <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/10 blur-2xl transition-opacity group-hover:opacity-70" />
-            <div className="pointer-events-none absolute -left-6 -bottom-6 h-20 w-20 rounded-full bg-accent/10 blur-2xl" />
+      {/* --- HERO SECTION --- */}
+      <div className="text-center mb-12 animate-fadeIn">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-3">
+          Selamat Datang di <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500">SiBakat.id</span>
+        </h1>
+        <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+          Platform identifikasi bakat olahraga berbasis IPTEK untuk membantu pelatih dan guru menemukan potensi terbaik anak.
+        </p>
+      </div>
 
-            <div className="relative flex h-full flex-col">
-              <div className="flex items-start justify-between">
-                <div className={`font-semibold ${titleSize()}`}>{label}</div>
-                <Icon className={`${iconSize()} text-slate-400 group-hover:text-primary transition`} />
-              </div>
+      {/* --- PANDUAN SINGKAT (QUICK START) --- */}
+      <div className="mb-12 animate-fadeIn animation-delay-200">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="h-px flex-1 bg-slate-200"></div>
+          <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Cara Menggunakan</span>
+          <div className="h-px flex-1 bg-slate-200"></div>
+        </div>
 
-              <div className="mt-auto">
-                <div className={`text-slate-600 ${descSize()}`}>{desc}</div>
-              </div>
+        {/* Grid 4 Kolom (Responsif: 1 -> 2 -> 4) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          {/* Step 1 */}
+          <div className="card p-5 relative overflow-hidden group hover:shadow-md transition-all border-l-4 border-l-blue-500">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+              <FilePlus2 size={64} />
             </div>
-
-            <div className="absolute right-4 bottom-4 text-slate-400 group-hover:text-primary transition">
-              →
+            <div className="relative z-10">
+              <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm mb-3">1</div>
+              <h3 className="font-bold text-base text-slate-800 mb-1">Input Data</h3>
+              <p className="text-slate-600 text-xs mb-3 leading-relaxed">
+                Masuk ke menu <b>Tambah Data</b> untuk memasukkan biodata anak, data sekolah, dan hasil tes fisik.
+              </p>
+              <Link to="/tambah-data" className="text-xs font-semibold text-blue-600 flex items-center gap-1 hover:gap-2 transition-all">
+                Mulai Input <ArrowRight size={12} />
+              </Link>
             </div>
-          </Link>
-        ))}
+          </div>
+
+          {/* Step 2 */}
+          <div className="card p-5 relative overflow-hidden group hover:shadow-md transition-all border-l-4 border-l-purple-500">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Activity size={64} />
+            </div>
+            <div className="relative z-10">
+              <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-sm mb-3">2</div>
+              <h3 className="font-bold text-base text-slate-800 mb-1">Lihat Analisis</h3>
+              <p className="text-slate-600 text-xs mb-3 leading-relaxed">
+                Buka <b>Data Anak</b> lalu klik tombol <b>View</b>. Sistem otomatis menghitung potensi dan rekomendasi cabang.
+              </p>
+              <Link to="/data-anak" className="text-xs font-semibold text-purple-600 flex items-center gap-1 hover:gap-2 transition-all">
+                Lihat Data <ArrowRight size={12} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Step 3: Komparasi (BARU) */}
+          <div className="card p-5 relative overflow-hidden group hover:shadow-md transition-all border-l-4 border-l-orange-500">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+              <BarChart2 size={64} />
+            </div>
+            <div className="relative z-10">
+              <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-sm mb-3">3</div>
+              <h3 className="font-bold text-base text-slate-800 mb-1">Komparasi</h3>
+              <p className="text-slate-600 text-xs mb-3 leading-relaxed">
+                Bandingkan statistik antar anak di menu <b>Komparasi</b> untuk melihat perbedaan potensi secara visual.
+              </p>
+              <Link to="/komparasi-statistik" className="text-xs font-semibold text-orange-600 flex items-center gap-1 hover:gap-2 transition-all">
+                Mulai Bandingkan <ArrowRight size={12} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Step 4 */}
+          <div className="card p-5 relative overflow-hidden group hover:shadow-md transition-all border-l-4 border-l-emerald-500">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+              <FileOutput size={64} />
+            </div>
+            <div className="relative z-10">
+              <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-sm mb-3">4</div>
+              <h3 className="font-bold text-base text-slate-800 mb-1">Ekspor Laporan</h3>
+              <p className="text-slate-600 text-xs mb-3 leading-relaxed">
+                Unduh hasil analisis dalam format <b>Excel</b> melalui tabel Data Anak untuk kebutuhan pelaporan.
+              </p>
+              <span className="text-xs font-medium text-slate-400 cursor-default">
+                Tersedia di Tabel Data
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Ajakan ke halaman lain */}
+        <div className="mt-8 text-center animate-fadeIn animation-delay-300">
+          <p className="text-slate-600 text-sm">
+            Ingin mempelajari dasar teori dan metode? Silakan baca <Link to="/norma-penilaian" className="text-primary font-semibold hover:underline">Norma Penilaian</Link> atau <Link to="/panduan-sport-search" className="text-primary font-semibold hover:underline">Panduan Sport Search</Link>.
+          </p>
+        </div>
+      </div>
+
+      {/* --- MENU GRID UTAMA --- */}
+      <div className="animate-fadeIn animation-delay-500">
+        <h2 className="text-xl font-bold text-slate-800 mb-6">Menu Utama</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {menuItems.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="group card p-5 flex items-start gap-4 hover:shadow-lg hover:border-primary/30 transition-all duration-300"
+            >
+              <div className={`p-3 rounded-xl ${item.bg} ${item.color} group-hover:scale-110 transition-transform duration-300`}>
+                <item.Icon size={24} />
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-800 group-hover:text-primary transition-colors">
+                  {item.label}
+                </h3>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+              <div className="ml-auto self-center opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0">
+                <ArrowRight size={16} className="text-slate-400" />
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </AppLayout>
   )
