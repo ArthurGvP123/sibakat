@@ -8,8 +8,10 @@ import { useAuth } from '../contexts/AuthContext'
 import { Mail, Lock, Eye, EyeOff, LogIn, ArrowRight } from 'lucide-react'
 import AnimatedBackground from '../components/AnimatedBackground'
 
-// Import logo untuk watermark
+// Logo untuk watermark (background)
 const logoWatermark = new URL('../assets/Logo Sibakat (Transparent).png', import.meta.url).href
+// Logo untuk Splash Screen (Ikon Utama)
+const logoSplash = new URL('../assets/Logo Sibakat (Transparent).png', import.meta.url).href
 
 function mapFirebaseError(code?: string) {
   switch (code) {
@@ -37,8 +39,16 @@ export default function Login() {
   const [show, setShow] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  
+  // State khusus untuk menangani animasi sukses
+  const [loginSuccess, setLoginSuccess] = useState(false)
 
-  if (currentUser) return <Navigate to="/" replace />
+  // Modifikasi Redirect: 
+  // Jika user sudah ada TAPI sedang animasi sukses, JANGAN redirect dulu.
+  // Biarkan animasi selesai baru navigasi manual.
+  if (currentUser && !loginSuccess) {
+    return <Navigate to="/dashboard" replace />
+  }
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -46,16 +56,44 @@ export default function Login() {
     setBusy(true)
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password)
-      const redirectTo = (location.state as any)?.from?.pathname || '/'
-      navigate(redirectTo, { replace: true })
+      
+      // LOGIN SUKSES: Aktifkan mode animasi
+      setLoginSuccess(true) 
+      setBusy(false)
+
+      // Tunggu animasi selesai (1.6s - 1.8s) lalu pindah halaman
+      setTimeout(() => {
+        const redirectTo = (location.state as any)?.from?.pathname || '/dashboard'
+        navigate(redirectTo, { replace: true })
+      }, 1600)
+
     } catch (err: any) {
       console.error('Login error:', err)
       setError(mapFirebaseError(err?.code))
-    } finally {
       setBusy(false)
     }
   }
 
+  // === TAMPILAN SPLASH SCREEN (Saat loginSuccess = true) ===
+  if (loginSuccess) {
+    return (
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white overflow-hidden">
+        {/* Lingkaran latar belakang yang membesar */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-white animate-pulse" />
+        
+        {/* Logo Animasi SAJA (Tanpa Teks) */}
+        <div className="relative z-10 flex flex-col items-center">
+          <img 
+            src={logoSplash} 
+            alt="SiBakat Splash" 
+            className="w-32 h-32 md:w-48 md:h-48 object-contain animate-splash"
+          />
+        </div>
+      </div>
+    )
+  }
+
+  // === TAMPILAN FORM LOGIN (Light Theme / Putih) ===
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-white overflow-hidden font-sans">
       
@@ -169,7 +207,7 @@ export default function Login() {
 
         {/* Copyright kecil di bawah */}
         <div className="mt-6 text-center text-xs text-slate-400">
-          &copy; {new Date().getFullYear()} SiBakat.id — Universitas Negeri Semarang
+          &copy; {new Date().getFullYear()} SiBakat.id
         </div>
       </div>
     </div>

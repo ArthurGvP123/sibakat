@@ -170,6 +170,12 @@ export default function TambahData() {
     e.preventDefault()
     if (!currentUser) return
 
+    // ✅ VALIDASI USIA (11 - 15 TAHUN)
+    if (form.usia < 11 || form.usia > 15) {
+      showToast('Usia harus antara 11 - 15 tahun (sesuai norma penilaian).', 'error')
+      return
+    }
+
     // Validasi MFT
     let mftL = form.mftLevel, mftS = form.mftShuttle
     if (mftText.trim()) {
@@ -321,7 +327,7 @@ export default function TambahData() {
             `}
           >
             <Edit2 size={16} />
-            Edit Data Anak
+            Edit Data
           </button>
         </div>
 
@@ -570,7 +576,19 @@ function IdentitasCard({ form, setForm, schools, labelCls, inputCls }: any) {
           </div>
           <div>
             <label className={labelCls}>Usia (Tahun)</label>
-            <input type="number" className={inputCls} value={form.usia} onChange={e => setForm({...form, usia: Number(e.target.value)})} />
+            <input 
+              type="number" 
+              min={11} 
+              max={15} 
+              className={inputCls} 
+              value={form.usia} 
+              onChange={e => setForm({...form, usia: Number(e.target.value)})} 
+              placeholder="11-15"
+            />
+            {/* Helper Text untuk Rentang Usia */}
+            <p className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+              <AlertCircle size={10} /> Rentang: 11 - 15 tahun
+            </p>
           </div>
         </div>
         <div>

@@ -1,64 +1,20 @@
+/* src/index.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Terapkan font sans (Montserrat) ke seluruh dokumen */
 @layer base {
   html, body {
     @apply font-sans;
   }
 }
 
-/* Custom Animations */
 @layer utilities {
-  @keyframes slideInLeft {
-    from {
-      opacity: 0;
-      transform: translateX(-40px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes slideInRight {
-    from {
-      opacity: 0;
-      transform: translateX(40px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
+  /* ... animasi yang sudah ada sebelumnya (slideIn, fadeIn) biarkan saja ... */
+  
   @keyframes slideInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  .animate-slideInLeft {
-    animation: slideInLeft 0.6s ease-out;
-  }
-
-  .animate-slideInRight {
-    animation: slideInRight 0.6s ease-out;
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .animate-slideInUp {
@@ -69,18 +25,41 @@
     animation: fadeIn 0.5s ease-out;
   }
 
-  /* Hide scrollbar while maintaining scroll functionality */
-  .hide-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;     /* Firefox */
+  /* === NEW: ANIMASI SPLASH SCREEN === */
+  @keyframes splash-bounce-zoom {
+    0% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    40% {
+      opacity: 1;
+      transform: scale(1.1); /* Efek memantul sedikit */
+    }
+    60% {
+      transform: scale(1);   /* Kembali ke ukuran normal sebentar */
+      opacity: 1;
+    }
+    100% {
+      transform: scale(25);  /* Zoom in ekstrem seolah masuk ke dalam logo */
+      opacity: 0;
+    }
   }
 
+  .animate-splash {
+    /* Durasi 1.8 detik, cubic-bezier untuk efek zoom yang dramatis di akhir */
+    animation: splash-bounce-zoom 1.8s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+  }
+  
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
   .hide-scrollbar::-webkit-scrollbar {
-    display: none;  /* Chrome, Safari and Opera */
+    display: none;
   }
 }
 
-/* util kelas */
+/* ... util kelas lainnya ... */
 @layer components {
   .btn-primary {
     @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold bg-primary text-white hover:opacity-95 transition;
