@@ -1,6 +1,8 @@
 # SiBakat.id — Sistem Identifikasi Bakat Olahraga
 
-![SiBakat Logo](public/Logo%20Sibakat%20(Transparent).png)
+<p align="center">
+  <img src="./src/assets/Logo%20Sibakat%20(White).png" alt="Logo SiBakat White" width="300" />
+</p>
 
 **SiBakat** adalah aplikasi web modern berbasis *Sport Search* yang dirancang untuk membantu guru olahraga, pelatih, dan praktisi dalam mengidentifikasi potensi bakat olahraga anak usia dini (11-15 tahun) secara ilmiah, terukur, dan akurat.
 
