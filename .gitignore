@@ -25,3 +25,5 @@ dist-ssr
 *.txt
 package-lock.json
 REDESIGN_NOTES.md
+.firebase
+.firebaserc
