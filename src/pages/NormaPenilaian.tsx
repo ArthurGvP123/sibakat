@@ -527,11 +527,11 @@ export default function NormaPenilaian() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 <tr className="hover:bg-emerald-50/50 transition-colors">
-                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">≥ 7</td>
+                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">6</td>
                   <td className="px-6 py-4"><span className="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-bold border border-emerald-200">Sangat Potensial</span></td>
                 </tr>
                 <tr className="hover:bg-green-50/50 transition-colors">
-                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">5 – 6</td>
+                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">5</td>
                   <td className="px-6 py-4"><span className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-xs font-bold border border-green-200">Potensial</span></td>
                 </tr>
                 <tr className="hover:bg-amber-50/50 transition-colors">
