@@ -7,11 +7,11 @@ import AppLayout from '../components/Navbar'
 const docFormulir = new URL('../assets/Formulir Catatan Pengukuran.docx', import.meta.url).href
 
 // Gambar (Sesuai rincian ekstensi file)
-const img1 = new URL('../assets/Gambar1.png', import.meta.url).href
+const img1 = new URL('../assets/Gambar1.jpeg', import.meta.url).href
 const img2 = new URL('../assets/Gambar2.jpg', import.meta.url).href
 const img3 = new URL('../assets/Gambar3.jpg', import.meta.url).href
 const img4 = new URL('../assets/Gambar4.jpg', import.meta.url).href
-const img5 = new URL('../assets/Gambar5.png', import.meta.url).href
+const img5 = new URL('../assets/Gambar5.jpeg', import.meta.url).href
 const img6 = new URL('../assets/Gambar6.jpg', import.meta.url).href
 const img7 = new URL('../assets/Gambar7.jpg', import.meta.url).href
 const img8 = new URL('../assets/Gambar8.jpg', import.meta.url).href

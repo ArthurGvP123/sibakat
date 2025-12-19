@@ -43,11 +43,9 @@ export default function Login() {
   // State khusus untuk menangani animasi sukses
   const [loginSuccess, setLoginSuccess] = useState(false)
 
-  // Modifikasi Redirect: 
-  // Jika user sudah ada TAPI sedang animasi sukses, JANGAN redirect dulu.
-  // Biarkan animasi selesai baru navigasi manual.
+  // Modifikasi Redirect
   if (currentUser && !loginSuccess) {
-    return <Navigate to="/dashboard" replace />
+    return <Navigate to="/" replace />
   }
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -61,9 +59,8 @@ export default function Login() {
       setLoginSuccess(true) 
       setBusy(false)
 
-      // Tunggu animasi selesai (1.6s - 1.8s) lalu pindah halaman
       setTimeout(() => {
-        const redirectTo = (location.state as any)?.from?.pathname || '/dashboard'
+        const redirectTo = (location.state as any)?.from?.pathname || '/'
         navigate(redirectTo, { replace: true })
       }, 1600)
 
@@ -74,14 +71,11 @@ export default function Login() {
     }
   }
 
-  // === TAMPILAN SPLASH SCREEN (Saat loginSuccess = true) ===
+  // === TAMPILAN SPLASH SCREEN ===
   if (loginSuccess) {
     return (
       <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white overflow-hidden">
-        {/* Lingkaran latar belakang yang membesar */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-white animate-pulse" />
-        
-        {/* Logo Animasi SAJA (Tanpa Teks) */}
         <div className="relative z-10 flex flex-col items-center">
           <img 
             src={logoSplash} 
@@ -93,57 +87,55 @@ export default function Login() {
     )
   }
 
-  // === TAMPILAN FORM LOGIN (Light Theme / Putih) ===
+  // === TAMPILAN FORM LOGIN (Fullscreen & No Scroll) ===
   return (
-    <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-white overflow-hidden font-sans">
+    <div className="h-screen w-screen relative flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-white overflow-hidden font-sans">
       
       {/* 1. Background Animasi (Blobs) */}
       <AnimatedBackground />
 
-      {/* 2. Watermark Logo Sibakat */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+      {/* 2. Watermark Logo Sibakat (Diperbaiki untuk Mobile) */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[1]">
         <img 
           src={logoWatermark} 
           alt="Watermark" 
-          className="w-[80vw] max-w-[600px] opacity-[0.03] grayscale brightness-110 animate-pulse" 
+          className="w-[120vw] sm:w-[70vw] max-w-[800px] opacity-[0.05] grayscale brightness-110 animate-pulse" 
           style={{ animationDuration: '4s' }}
         />
       </div>
 
-      {/* 3. Konten Utama */}
-      <div className="w-full max-w-md px-6 relative z-10 animate-slideInUp">
-        <div className="bg-white/70 backdrop-blur-xl border border-white/60 shadow-2xl rounded-3xl p-8 sm:p-10 ring-1 ring-slate-200/50">
+      {/* 3. Konten Utama - Ringkas agar muat tanpa scroll */}
+      <div className="w-full max-w-md px-6 relative z-10 animate-slideInUp flex flex-col items-center">
+        <div className="bg-white/70 w-full backdrop-blur-xl border border-white/60 shadow-2xl rounded-3xl p-6 sm:p-8 ring-1 ring-slate-200/50">
           
           {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-4 shadow-sm">
-              <LogIn size={24} />
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary mb-3 shadow-sm">
+              <LogIn size={20} />
             </div>
-            <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight">Selamat Datang</h2>
-            <p className="text-slate-500 mt-2 text-sm">Masuk untuk mengelola data bakat siswa.</p>
+            <h2 className="text-2xl font-extrabold text-slate-800 tracking-tight">Selamat Datang</h2>
+            <p className="text-slate-500 mt-1 text-xs">Masuk untuk mengelola data bakat siswa.</p>
           </div>
 
           {/* Error Alert */}
           {error && (
-            <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm flex items-start gap-3 animate-fadeIn">
-              <span className="text-lg">⚠️</span>
+            <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-xs flex items-start gap-2 animate-fadeIn">
               <p className="font-medium">{error}</p>
             </div>
           )}
 
           {/* Form */}
-          <form className="space-y-5" onSubmit={onSubmit} noValidate>
+          <form className="space-y-4" onSubmit={onSubmit} noValidate>
             
-            {/* Email Field */}
-            <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">Email</label>
+            <div className="space-y-1">
+              <label className="block text-xs font-semibold text-slate-700">Email</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
-                  <Mail size={18} />
+                  <Mail size={16} />
                 </div>
                 <input
                   type="email"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm text-sm"
                   placeholder="nama@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -152,18 +144,15 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Password Field */}
-            <div className="space-y-1.5">
-              <div className="flex justify-between items-center">
-                <label className="block text-sm font-semibold text-slate-700">Kata Sandi</label>
-              </div>
+            <div className="space-y-1">
+              <label className="block text-xs font-semibold text-slate-700">Kata Sandi</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
-                  <Lock size={18} />
+                  <Lock size={16} />
                 </div>
                 <input
                   type={show ? 'text' : 'password'}
-                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm"
+                  className="w-full pl-10 pr-12 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm text-sm"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -174,40 +163,33 @@ export default function Login() {
                   className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
                   onClick={() => setShow(!show)}
                 >
-                  {show ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {show ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
-              className={`w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 ${busy ? 'opacity-70 cursor-not-allowed' : ''}`}
+              className={`w-full py-3 px-4 mt-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 text-sm ${busy ? 'opacity-70 cursor-not-allowed' : ''}`}
               disabled={busy}
             >
               {busy ? (
                 <>
-                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Memproses...
                 </>
               ) : (
-                <>Masuk Sekarang <ArrowRight size={18} /></>
+                <>Masuk Sekarang <ArrowRight size={16} /></>
               )}
             </button>
           </form>
 
-          {/* Footer Link */}
-          <div className="mt-8 text-center text-sm text-slate-500">
+          <div className="mt-6 text-center text-xs text-slate-500">
             Belum punya akun?{' '}
-            <Link to="/signup" className="text-primary font-bold hover:underline hover:text-blue-700 transition">
+            <Link to="/signup" className="text-primary font-bold hover:underline transition">
               Daftar di sini
             </Link>
           </div>
-        </div>
-
-        {/* Copyright kecil di bawah */}
-        <div className="mt-6 text-center text-xs text-slate-400">
-          &copy; {new Date().getFullYear()} SiBakat.id
         </div>
       </div>
     </div>

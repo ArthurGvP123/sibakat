@@ -39,6 +39,8 @@ export default function App() {
       <Route path="/edit-data/:id" element={<ProtectedRoute><TambahData /></ProtectedRoute>} />
 
       <Route path="/data-anak/:id" element={<ProtectedRoute><StatistikAnak /></ProtectedRoute>} />
+      <Route path="/statistik-anak/:id" element={<ProtectedRoute><StatistikAnak /></ProtectedRoute>} />
+      <Route path="/statistik-anak" element={<ProtectedRoute><StatistikAnak /></ProtectedRoute>} />
       <Route path="/komparasi-statistik" element={<ProtectedRoute><KomparasiStatistik /></ProtectedRoute>} />
       <Route path="/norma-penilaian" element={<ProtectedRoute><NormaPenilaian /></ProtectedRoute>} />
       <Route path="/panduan-sport-search" element={<ProtectedRoute><PanduanSportSearch /></ProtectedRoute>} />

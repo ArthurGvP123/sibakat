@@ -1,20 +1,21 @@
 // src/pages/StatistikAnak.tsx
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { doc, getDoc } from 'firebase/firestore'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import { doc, onSnapshot, collection, query, orderBy } from 'firebase/firestore'
 import { db } from '../firebase'
 import AppLayout from '../components/Navbar'
 import { useAuth } from '../contexts/AuthContext'
-import { computeScoresAndRecommend, DEFAULT_RECO_LIMIT, DEFAULT_RECO_THRESHOLD, type Gender } from '../lib/norma'
+import { computeScoresAndRecommend, DEFAULT_RECO_THRESHOLD, type Gender } from '../lib/norma'
 import ValueScoreCard from '../components/ValueScoreCard'
 import TopRecommendationsCard from '../components/TopRecommendationsCard'
 import RadarScoreCard from '../components/RadarScoreCard'
+import { Search, User } from 'lucide-react'
 
 type ChildDoc = {
+  id: string
   nama: string
   gender: Gender
   usia: number
-  // indikator
   ltbt?: number
   lbb?: number
   lt?: number
@@ -22,51 +23,63 @@ type ChildDoc = {
   l40m?: number
   mftLevel?: number
   mftShuttle?: number
-  // biodata
   tinggiBadan?: number
   tinggiDuduk?: number
   beratBadan?: number
   rentangLangan?: number
-  // sekolah
   asalSekolah?: string
-  // Minat dan Bakat
   minatBakat?: string
 }
 
 export default function StatistikAnak() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const { currentUser } = useAuth()
+  
   const [child, setChild] = useState<ChildDoc | null>(null)
+  const [childrenList, setChildrenList] = useState<ChildDoc[]>([])
   const [loading, setLoading] = useState(true)
+  
+  // State untuk Search Bar (Sinkronisasi)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const radarCardRef = useRef<any>(null)
 
-  // Sinkron tinggi Biodata = tinggi kartu Radar
-  const radarCardRef = useRef<HTMLDivElement | null>(null)
-  const [radarHeight, setRadarHeight] = useState<number | undefined>(undefined)
-
+  // 1. Fetch Semua Anak untuk Search Bar (Urut Abjad)
   useEffect(() => {
-    if (!radarCardRef.current) return
-    const el = radarCardRef.current
-    const measure = () => setRadarHeight(el.offsetHeight)
-    const ro = new ResizeObserver(() => measure())
-    ro.observe(el)
-    measure()
-    window.addEventListener('resize', measure)
-    return () => {
-      ro.disconnect()
-      window.removeEventListener('resize', measure)
-    }
-  }, [])
-
-  useEffect(() => {
-    (async () => {
-      if (!currentUser || !id) return
-      setLoading(true)
-      const ref = doc(db, 'users', currentUser.uid, 'children', id)
-      const snap = await getDoc(ref)
-      if (snap.exists()) setChild(snap.data() as ChildDoc)
+    if (!currentUser) return
+    const q = query(collection(db, 'users', currentUser.uid, 'children'), orderBy('nama', 'asc'))
+    const unsub = onSnapshot(q, (snap) => {
+      const list = snap.docs.map(d => ({ id: d.id, ...d.data() } as ChildDoc))
+      setChildrenList(list)
       setLoading(false)
-    })()
+    })
+    return () => unsub()
+  }, [currentUser])
+
+  // 2. Sinkronisasi Data Anak Terpilih (dari URL)
+  useEffect(() => {
+    if (!currentUser || !id) {
+      setChild(null)
+      setSearchQuery('')
+      return
+    }
+    const unsub = onSnapshot(doc(db, 'users', currentUser.uid, 'children', id), (snap) => {
+      if (snap.exists()) {
+        const data = snap.data() as ChildDoc
+        setChild({ ...data, id: snap.id })
+        setSearchQuery(data.nama) // Otomatis terisi nama jika ada ID di URL
+      }
+    })
+    return () => unsub()
   }, [currentUser, id])
+
+  // Filter pencarian dropdown
+  const filteredResults = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim()
+    if (!q) return []
+    return childrenList.filter(c => c.nama.toLowerCase().includes(q))
+  }, [searchQuery, childrenList])
 
   const calc = useMemo(() => {
     if (!child) return null
@@ -84,98 +97,129 @@ export default function StatistikAnak() {
   }, [child])
 
   return (
-    <AppLayout title="Statistik Anak">
-      {loading && (
-        <div className="min-h-[40vh] grid place-items-center text-slate-500">Memuat…</div>
-      )}
-
-      {!loading && !child && (
-        <div className="card p-6 text-slate-600 rounded-2xl">
-          Data anak tidak ditemukan. <Link className="text-primary font-medium" to="/data-anak">Kembali ke Data Anak</Link>
-        </div>
-      )}
-
-      {!loading && child && calc && (
-        <div className="space-y-6 animate-fadeIn">
-          {/* Header ringkas */}
-          <div className="card p-4 flex flex-wrap items-center gap-4 rounded-2xl">
-            <Link to="/data-anak" className="btn-ghost rounded-2xl">← Kembali</Link>
-            <div className="grow">
-              <div className="text-lg font-bold">{child.nama}</div>
-              <div className="text-sm text-slate-600">
-                {child.gender} • Usia {child.usia}{child.asalSekolah ? ` • ${child.asalSekolah}` : ''}
-              </div>
+    <AppLayout title="Analisis Statistik Bakat">
+      <div className="space-y-6">
+        
+        {/* --- SEARCH BAR (Desain Mirip Komparasi) --- */}
+        <div className="card p-4 bg-white border border-slate-200 shadow-sm relative z-50">
+          <div className="relative w-full max-w-lg mx-auto">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <Search size={18} />
             </div>
-          </div>
-
-          {/* ===== Grid 2x2 ===== */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* 1) BIODATA — tinggi = tinggi kartu Radar */}
-            <div
-              className="card p-0 overflow-hidden flex flex-col rounded-2xl"
-              style={radarHeight ? { height: radarHeight } : undefined}
-            >
-              <div className="px-4 py-3 border-b font-semibold text-center">Biodata</div>
-              <div className="p-4 flex-1 overflow-auto">
-                <dl className="grid grid-cols-1 gap-3 text-sm">
-                  <BItem label="Nama" value={child.nama} />
-                  <BItem label="Gender" value={child.gender} />
-                  <BItem label="Usia" value={fmt(child.usia, 'tahun')} />
-                  <BItem label="Asal Sekolah" value={child.asalSekolah ?? '—'} />
-                  <BItem label="Tinggi Badan" value={fmt(child.tinggiBadan, 'cm')} />
-                  <BItem label="Tinggi Duduk" value={fmt(child.tinggiDuduk, 'cm')} />
-                  <BItem label="Berat Badan" value={fmt(child.beratBadan, 'kg')} />
-                  <BItem label="Rentang Langan" value={fmt(child.rentangLangan, 'cm')} />
-                </dl>
-              </div>
-            </div>
-
-            {/* 2) PROFIL SKOR (RADAR) */}
-            <RadarScoreCard
-              ref={radarCardRef}
-              scores={calc.scores}
-              recCount={calc.meta.recommendedCount}
-              minatBakat={child.minatBakat}
-            />
-
-
-            {/* 3) NILAI & SKOR */}
-            <ValueScoreCard
-              values={{
-                ltbt: child.ltbt,
-                lbb: child.lbb,
-                lt: child.lt,
-                lk: child.lk,
-                l40m: child.l40m,
-                mftLevel: child.mftLevel,
-                mftShuttle: child.mftShuttle,
+            <input
+              type="text"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition text-sm font-medium"
+              placeholder="Cari nama anak..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setIsSearchOpen(true)
               }}
-              scores={calc.scores}
+              onFocus={() => setIsSearchOpen(true)}
             />
-
-            {/* 4) REKOMENDASI (Top-6) */}
-            <TopRecommendationsCard
-              recommendations={calc.recommended}
-              limit={DEFAULT_RECO_LIMIT}
-              thresholdPct={Math.round((calc.meta?.threshold ?? DEFAULT_RECO_THRESHOLD) * 100)}
-            />
+            
+            {isSearchOpen && searchQuery && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-slate-200 shadow-xl z-[100] max-h-60 overflow-auto divide-y">
+                {filteredResults.length > 0 ? (
+                  filteredResults.map(c => (
+                    <button
+                      key={c.id}
+                      onClick={() => {
+                        navigate(`/statistik-anak/${c.id}`)
+                        setIsSearchOpen(false)
+                      }}
+                      className="w-full text-left px-4 py-3 hover:bg-slate-50 transition flex flex-col group"
+                    >
+                      <span className="font-semibold text-slate-800 group-hover:text-primary transition-colors">{c.nama}</span>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold">{c.asalSekolah || 'Sekolah Belum Terdata'}</span>
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-4 py-3 text-sm text-slate-500 italic text-center">Data anak tidak ditemukan.</div>
+                )}
+              </div>
+            )}
           </div>
         </div>
-      )}
+
+        {/* --- TAMPILAN DATA --- */}
+        {loading ? (
+          <div className="py-20 text-center text-slate-400 animate-pulse">Menghubungkan ke database...</div>
+        ) : !child ? (
+          <div className="py-20 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+            <div className="max-w-xs mx-auto space-y-3">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto shadow-sm text-slate-300">
+                <User size={32} />
+              </div>
+              <p className="text-slate-500 font-semibold italic">Silakan cari dan pilih nama anak di atas untuk menampilkan analisis.</p>
+            </div>
+          </div>
+        ) : (
+          <div className="animate-fadeIn space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* 1) PROFIL SINGKAT */}
+              <div className="card p-6 flex flex-col gap-6 rounded-2xl">
+                <div className="flex items-center justify-between border-b pb-3 border-slate-100">
+                  <h3 className="font-bold text-slate-800">Profil Peserta</h3>
+                  <Link to="/data-anak" className="text-[10px] font-bold bg-slate-100 px-2 py-1 rounded-lg text-slate-600 hover:bg-slate-200 transition-colors">DETAIL TABEL</Link>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <BItem label="Nama Lengkap" value={child.nama} />
+                  <BItem label="Jenis Kelamin" value={child.gender} />
+                  <BItem label="Usia" value={`${child.usia} Tahun`} />
+                  <BItem label="Sekolah" value={child.asalSekolah} />
+                  <BItem label="Tinggi" value={child.tinggiBadan ? `${child.tinggiBadan} cm` : undefined} />
+                  <BItem label="Berat" value={child.beratBadan ? `${child.beratBadan} kg` : undefined} />
+                </div>
+              </div>
+
+              {/* 2) RADAR CHART */}
+              {calc && (
+                <RadarScoreCard
+                  ref={radarCardRef}
+                  scores={calc.scores}
+                  recCount={calc.meta.recommendedCount}
+                  minatBakat={child.minatBakat}
+                />
+              )}
+            </div>
+
+            {calc && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* 3) SKOR INDIKATOR */}
+                <ValueScoreCard
+                  values={{
+                    ltbt: child.ltbt,
+                    lbb: child.lbb,
+                    lt: child.lt,
+                    lk: child.lk,
+                    l40m: child.l40m,
+                    mftLevel: child.mftLevel,
+                    mftShuttle: child.mftShuttle,
+                  }}
+                  scores={calc.scores}
+                />
+
+                {/* 4) TOP 6 REKOMENDASI */}
+                <TopRecommendationsCard
+                  recommendations={calc.recommended}
+                  limit={6}
+                  thresholdPct={Math.round((calc.meta?.threshold ?? DEFAULT_RECO_THRESHOLD) * 100)}
+                />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </AppLayout>
   )
 }
 
-/* ===== Helper kecil ===== */
 function BItem({ label, value }: { label: string; value?: string }) {
   return (
-    <div className="bg-slate-50 rounded-2xl px-3 py-2 border border-slate-200">
-      <div className="text-[11px] uppercase tracking-wide text-slate-500">{label}</div>
-      <div className="text-slate-800">{value ?? <span className="text-slate-400">—</span>}</div>
+    <div className="bg-slate-50/50 rounded-xl px-3 py-2.5 border border-slate-100">
+      <div className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1">{label}</div>
+      <div className="text-sm font-bold text-slate-700 truncate">{value ?? <span className="text-slate-300 font-normal">Belum diisi</span>}</div>
     </div>
   )
-}
-function fmt(v?: number, unit?: string) {
-  if (v == null) return undefined
-  return unit ? `${v} ${unit}` : String(v)
 }

@@ -52,12 +52,18 @@ export type PotentialCategory =
   | 'Kurang Potensial'
   | 'Tidak Potensial'
 
-/** Pemetaan jumlah rekomendasi → kategori */
+/** Pemetaan jumlah rekomendasi → kategori sesuai aturan terbaru */
 export function potentialCategoryFromCount(count: number): PotentialCategory {
-  if (count > 6) return 'Sangat Potensial'
-  if (count >= 5) return 'Potensial'
+  // Sangat Potensial jika rekomendasi >= 6
+  if (count >= 6) return 'Sangat Potensial'
+  
+  // Potensial jika rekomendasi tepat 5
+  if (count === 5) return 'Potensial'
+  
+  // Logika sisanya mengikuti pola sebelumnya
   if (count >= 3) return 'Cukup Potensial'
   if (count >= 1) return 'Kurang Potensial'
+  
   return 'Tidak Potensial'
 }
 
@@ -68,13 +74,9 @@ function mftToFloat(level?: number, shuttle?: number) {
 }
 
 // ====== TABEL NORMA (Putri & Putra, usia 11-15) ======
-// Format: untuk setiap indikator menyediakan fungsi skor berdasar nilai & usia.
-// Agar ringkas, threshold ditulis sebagai array range lalu fungsi finder.
-
-type Band = { min?: number; max?: number; score: number } // min inclusive, max inclusive
+type Band = { min?: number; max?: number; score: number }
 
 function byHigher(value: number, bands: Band[]) {
-  // bands diurutkan dari skor 5 → 1, pakai kondisi >= atau rentang [a..b]
   for (const b of bands) {
     const okMin = b.min === undefined ? true : value >= b.min
     const okMax = b.max === undefined ? true : value <= b.max
@@ -82,9 +84,8 @@ function byHigher(value: number, bands: Band[]) {
   }
   return 1
 }
+
 function byLower(value: number, bands: Band[]) {
-  // untuk indikator "semakin kecil semakin baik" seperti LK & L40M
-  // bands diurutkan dari skor 5 → 1 dengan kondisi <= atau rentang [a..b]
   for (const b of bands) {
     const okMin = b.min === undefined ? true : value >= b.min
     const okMax = b.max === undefined ? true : value <= b.max
@@ -306,7 +307,7 @@ const NORMA: NormMap = {
         { max: 16.92, score: 5 },
         { min: 16.93, max: 19.47, score: 4 },
         { min: 19.48, max: 22.03, score: 3 },
-        { min: 22.03, max: 24.57, score: 2 }, // tumpang tindih kecil → disesuaikan
+        { min: 22.03, max: 24.57, score: 2 },
         { min: 24.58, score: 1 },
       ]),
       l40m: (v) => byLower(v, [
@@ -432,7 +433,6 @@ const NORMA: NormMap = {
       ]),
       lt: (v) => byHigher(v, [
         { min: 44, score: 5 },
-        // catatan input sumber: range tampak tidak konsisten, dibuat inklusif
         { min: 27, max: 43, score: 4 },
         { min: 29, max: 37, score: 3 },
         { min: 22, max: 28, score: 2 },
@@ -572,7 +572,6 @@ export function scoreIndicators(profile: ChildProfile): Score6 {
 // ====== PROFIL TARGET 42 CABANG ======
 type SportProfile = {
   name: string
-  // skor target 1..5
   ltbt: number; lt: number; lbb: number; lk: number; l40m: number; mft: number
 }
 
@@ -621,7 +620,6 @@ const SPORTS: SportProfile[] = [
   { name: 'Tolak Peluru (Olahraga Individu)',        ltbt:3, lt:4, lbb:5, lk:2, l40m:2, mft:1 },
 ]
 
-// Hitung jarak (semakin kecil semakin cocok) dengan abaikan indikator yang belum ada
 function distance(a: Score6, b: SportProfile) {
   let sum = 0
   let n = 0
@@ -632,17 +630,15 @@ function distance(a: Score6, b: SportProfile) {
   if (a.l40m != null) { sum += Math.abs(a.l40m - b.l40m); n++ }
   if (a.mft  != null) { sum += Math.abs(a.mft  - b.mft ); n++ }
   if (n === 0) return Number.POSITIVE_INFINITY
-  return sum / n // rata-rata selisih
+  return sum / n
 }
 
-// ===== Utility: konversi jarak → skor kecocokan 0..1 =====
 function matchFromDistance(avgDiff: number) {
   if (!Number.isFinite(avgDiff)) return 0
-  const ratio = 1 - Math.min(1, avgDiff / 4) // 0..1 (asumsi selisih max rata-rata 4)
+  const ratio = 1 - Math.min(1, avgDiff / 4)
   return Math.max(0, Math.min(1, ratio))
 }
 
-// ===== Rekomendasi versi baru: semua cabang, lalu urut =====
 function recommendAll(scores: Score6): Recommendation[] {
   const rows = SPORTS.map((s) => {
     const d = distance(scores, s)
@@ -656,7 +652,6 @@ function recommendAll(scores: Score6): Recommendation[] {
     } as Recommendation
   })
 
-  // Urut: match desc → distance asc → nama asc
   rows.sort((a, b) => {
     if (b.match !== a.match) return b.match - a.match
     if (a.distance !== b.distance) return a.distance - b.distance
@@ -666,7 +661,6 @@ function recommendAll(scores: Score6): Recommendation[] {
   return rows
 }
 
-// Util utama: dari raw + profil → skor 1..5 per indikator + rekomendasi modern
 export function computeScoresAndRecommend(
   profile: ChildProfile,
   opts?: { threshold?: number; limit?: number }
@@ -691,8 +685,6 @@ export function computeScoresAndRecommend(
   return { scores, top, recommended, all, meta }
 }
 
-// ====== Fungsi legacy (kompatibilitas mundur) ======
-// Tetap mengembalikan bentuk lama (tanpa filter threshold) agar kode lama aman.
 export function recommendTop(scores: Score6, topN = 6) {
   const all = recommendAll(scores)
   const sliced = all.slice(0, topN)

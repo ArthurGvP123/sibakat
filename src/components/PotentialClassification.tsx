@@ -1,13 +1,4 @@
 // src/components/PotentialClassification.tsx
-// Klasifikasi Potensi berbasis jumlah rekomendasi cabang olahraga.
-//
-// Cara pakai (wajib):
-//   <PotentialClassification recCount={calc.meta.recommendedCount} />
-//
-// Opsional tampilkan breakdown skor indikator (hanya untuk display):
-//   <PotentialClassification recCount={...} scores={calc.scores} showBreakdown />
-
-// import type { PotentialCategory } from '../lib/norma'
 import { potentialCategoryFromCount } from '../lib/norma'
 
 type Scores = {
@@ -22,7 +13,7 @@ type Scores = {
 export function computePotentialClassificationFromCount(recCount: number) {
   const category = potentialCategoryFromCount(recCount)
 
-  // Warna badge per kategori (konsisten dengan sebelumnya)
+  // Warna badge per kategori
   let badgeCls: string
   switch (category) {
     case 'Sangat Potensial':
@@ -45,18 +36,14 @@ export function computePotentialClassificationFromCount(recCount: number) {
 }
 
 type Props = {
-  /** Jumlah cabang olahraga yang masuk rekomendasi (>= threshold) */
   recCount: number
-  /** Opsional: skor 6 indikator untuk breakdown visual saja */
   scores?: Scores
-  /** Posisi teks/badge */
   align?: 'left' | 'center' | 'right'
-  /** Opsional: tampilkan breakdown 6 skor seperti 4-4-4-4-4-4 */
   showBreakdown?: boolean
   className?: string
 }
 
-/** Komponen tampilan klasifikasi potensi (berbasis jumlah rekomendasi) */
+/** Komponen tampilan klasifikasi potensi */
 export default function PotentialClassification({
   recCount,
   scores,
@@ -80,14 +67,14 @@ export default function PotentialClassification({
 
   return (
     <div className={`${alignCls} ${className ?? ''}`}>
-      <div className={`inline-flex items-center rounded-full px-1 py-1 text-xxs font-semibold ${badgeCls}`}>
+      {/* Badge Kategori */}
+      <div className={`inline-flex items-center rounded-full px-2 py-1 text-xxs font-semibold ${badgeCls}`}>
         {category}
       </div>
 
-      {/* Informasi baru: tampilkan jumlah rekomendasi, bukan total skor */}
-      <div className="mt-1 text-xxs text-slate-600">({recCount} cabang)</div>
+      {/* Keterangan jumlah cabang dihilangkan sesuai permintaan */}
 
-      {/* Breakdown skor indikator: opsional (untuk konteks/diagnostik visual) */}
+      {/* Breakdown skor indikator: tetap ada namun hanya muncul jika properti showBreakdown diaktifkan */}
       {showBreakdown && (
         <div className="mt-1 text-[11px] leading-tight text-slate-500 font-mono">
           <div className="uppercase tracking-wide not-italic font-sans">Skor 6 Indikator</div>

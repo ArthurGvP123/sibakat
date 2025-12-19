@@ -43,22 +43,17 @@ export default function KomparasiStatistik() {
   const [calcA, setCalcA] = useState<CalcResult>(null)
   const [calcB, setCalcB] = useState<CalcResult>(null)
 
-  // Ambil daftar anak
   useEffect(() => {
     if (!currentUser) return
     setLoading(true)
     const colRef = collection(db, 'users', currentUser.uid, 'children')
     const qy = query(colRef, orderBy('createdAt', 'desc'))
-    const unsub = onSnapshot(
-      qy,
-      (snap) => {
-        const rows: Child[] = []
-        snap.forEach((d) => rows.push({ id: d.id, ...(d.data() as any) }))
-        setChildren(rows)
-        setLoading(false)
-      },
-      () => setLoading(false)
-    )
+    const unsub = onSnapshot(qy, (snap) => {
+      const rows: Child[] = []
+      snap.forEach((d) => rows.push({ id: d.id, ...(d.data() as any) }))
+      setChildren(rows)
+      setLoading(false)
+    }, () => setLoading(false))
     return () => unsub()
   }, [currentUser])
 
@@ -96,7 +91,6 @@ export default function KomparasiStatistik() {
     })()
   }, [selB])
 
-  // Radar data
   const radarData = useMemo(() => {
     const keys = [
       { label: 'Kecepatan',  k: 'l40m' as const },
@@ -116,7 +110,7 @@ export default function KomparasiStatistik() {
   return (
     <AppLayout title="Komparasi Statistik">
       <div className="space-y-6 animate-fadeIn">
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <CompareCard
             title="Anak A"
             color="blue"
@@ -139,14 +133,13 @@ export default function KomparasiStatistik() {
           />
         </div>
 
-        {/* Perbandingan Radar */}
         <div className="card p-0 overflow-hidden rounded-2xl border">
-          <div className="px-4 py-3 border-b font-semibold">Perbandingan Radar</div>
-          <div className="h-[380px] p-3">
+          <div className="px-4 py-3 border-b font-semibold bg-slate-50/50">Perbandingan Radar</div>
+          <div className="h-[320px] sm:h-[380px] p-3">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData}>
                 <PolarGrid />
-                <PolarAngleAxis dataKey="key" />
+                <PolarAngleAxis dataKey="key" tick={{ fontSize: 10 }} />
                 <PolarRadiusAxis domain={[0, 5]} tickCount={6} />
                 <Radar
                   name={childA?.nama || 'Anak A'}
@@ -166,7 +159,7 @@ export default function KomparasiStatistik() {
               </RadarChart>
             </ResponsiveContainer>
           </div>
-          <div className="px-4 pb-4 text-xs text-slate-500">
+          <div className="px-4 pb-4 text-[10px] sm:text-xs text-slate-500">
             Titik: Kecepatan, Kelincahan, Koordinasi, Kekuatan, Power, Daya Tahan (skala 0–5).
           </div>
         </div>
@@ -174,10 +167,6 @@ export default function KomparasiStatistik() {
     </AppLayout>
   )
 }
-
-/* ===========================
-   Sub-komponen & util
-=========================== */
 
 function CompareCard({
   title, color, loading, childrenList, onChange, child, calc,
@@ -201,36 +190,36 @@ function CompareCard({
       .filter(c =>
         c.nama.toLowerCase().includes(k) ||
         (c.asalSekolah || '').toLowerCase().includes(k)
-      )
-      .slice(0, 8)
+      ).slice(0, 8)
   }, [childrenList, keyword])
 
   const accent = color === 'blue' ? 'text-blue-600' : 'text-red-600'
   const chipBg = color === 'blue' ? 'bg-blue-50 text-blue-700' : 'bg-red-50 text-red-700'
   const barColor = color === 'blue' ? 'bg-blue-500' : 'bg-red-500'
+  const classificationContainer = color === 'blue' ? 'bg-blue-50/50 border-blue-100' : 'bg-red-50/50 border-red-100'
+  const headerBg = color === 'blue' ? 'bg-blue-50' : 'bg-red-50'
   const neutralChip = 'bg-slate-100 text-slate-700'
 
   return (
-    <div className="card p-4 space-y-4 relative z-[60] overflow-visible rounded-2xl border">
+    <div className={`card p-4 space-y-4 relative overflow-visible rounded-2xl border transition-all duration-200 ${focused ? 'z-[100]' : 'z-[60]'}`}>
       <div className="flex items-center justify-between">
         <div className="text-lg font-bold">{title}</div>
         {child && (
-          <div className={`text-sm font-semibold ${accent}`}>
+          <div className={`text-sm font-semibold truncate max-w-[150px] sm:max-w-none ${accent}`}>
             {child.nama}
           </div>
         )}
       </div>
 
-      {/* Search select */}
       <div className="relative">
         <div className="relative">
           <input
-            className="input pl-10"
+            className="input pl-10 text-sm"
             placeholder={loading ? 'Memuat daftar anak…' : 'Ketik nama/asal sekolah'}
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             onFocus={() => setFocused(true)}
-            onBlur={() => setTimeout(() => setFocused(false), 120)}
+            onBlur={() => setTimeout(() => setFocused(false), 200)}
             disabled={loading}
           />
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -243,70 +232,68 @@ function CompareCard({
                 <button
                   key={c.id}
                   onMouseDown={(e) => { e.preventDefault(); onChange(c.id); setKeyword(''); }}
-                  className="w-full text-left px-3 py-2 hover:bg-slate-50"
+                  className="w-full text-left px-3 py-2 hover:bg-slate-50 border-b last:border-b-0"
                 >
-                  <div className="font-medium">{c.nama}</div>
-                  <div className="text-xs text-slate-500">
+                  <div className="font-medium text-sm">{c.nama}</div>
+                  <div className="text-[10px] text-slate-500">
                     {c.gender} • Usia {c.usia}{c.asalSekolah ? ` • ${c.asalSekolah}` : ''}
                   </div>
                 </button>
               ))
             ) : (
-              <div className="px-3 py-2 text-sm text-slate-500">Tidak ada hasil</div>
+              <div className="px-3 py-2 text-sm text-slate-500 italic">Tidak ada hasil</div>
             )}
           </div>
         )}
       </div>
 
-      {/* Ringkasan & tabel */}
       {child && calc && (
         <div className="space-y-4 animate-fadeIn">
           <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
-            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${chipBg}`}>
+            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${chipBg}`}>
               {child.gender}
             </span>
-            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${chipBg}`}>
+            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${chipBg}`}>
               Usia {child.usia}
             </span>
             {child.asalSekolah && (
-              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${neutralChip}`}>
+              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${neutralChip}`}>
                 {child.asalSekolah}
               </span>
             )}
           </div>
 
-          {/* Nilai & Skor + mini bar */}
           <div className="overflow-x-auto rounded-2xl border hide-scrollbar">
-            <table className="w-full text-sm">
-              <thead className="bg-blue-50">
+            <table className="w-full text-xs sm:text-sm">
+              <thead className={`${headerBg}`}>
                 <tr>
-                  <th className="px-3 py-2 text-left">Indikator</th>
-                  <th className="px-3 py-2 text-left">Nilai</th>
-                  <th className="px-3 py-2 text-left">Skor (1–5)</th>
+                  <th className="px-2 sm:px-3 py-2 text-left">Indikator</th>
+                  <th className="px-2 sm:px-3 py-2 text-left">Nilai</th>
+                  <th className="px-2 sm:px-3 py-2 text-left">Skor</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
-                <RowItem label="Kecepatan (dt)"    value={child.l40m} score={calc.scores.l40m} colorClass={barColor} />
-                <RowItem label="Kelincahan (dt)"   value={child.lk}   score={calc.scores.lk}   colorClass={barColor} />
-                <RowItem label="Koordinasi (kali)" value={child.ltbt} score={calc.scores.ltbt} colorClass={barColor} />
-                <RowItem label="Kekuatan (m)"      value={child.lbb}  score={calc.scores.lbb}  colorClass={barColor} />
-                <RowItem label="Power (cm)"        value={child.lt}   score={calc.scores.lt}   colorClass={barColor} />
-                <RowItem label="Daya Tahan (Lv.Sh)" value={fmtMft(child.mftLevel, child.mftShuttle)} score={calc.scores.mft} colorClass={barColor} />
+                <RowItem label="Kecepatan"    value={child.l40m} score={calc.scores.l40m} colorClass={barColor} />
+                <RowItem label="Kelincahan"   value={child.lk}   score={calc.scores.lk}   colorClass={barColor} />
+                <RowItem label="Koordinasi"   value={child.ltbt} score={calc.scores.ltbt} colorClass={barColor} />
+                <RowItem label="Kekuatan"     value={child.lbb}  score={calc.scores.lbb}  colorClass={barColor} />
+                <RowItem label="Power"        value={child.lt}   score={calc.scores.lt}   colorClass={barColor} />
+                <RowItem label="Daya Tahan"   value={fmtMft(child.mftLevel, child.mftShuttle)} score={calc.scores.mft} colorClass={barColor} />
               </tbody>
             </table>
           </div>
 
           <div>
-            <TopRecommendationsCard recommendations={calc.top} limit={calc.top.length} />
+            {/* Mengirimkan prop color agar desain kartu rekomendasi sinkron */}
+            <TopRecommendationsCard recommendations={calc.top} limit={calc.top.length} color={color} />
           </div>
 
-          {/* Klasifikasi Potensi */}
-          <div className="rounded-2xl border overflow-hidden">
-            <div className="px-3 py-2 border-b font-semibold">Klasifikasi Potensi</div>
+          <div className={`rounded-2xl border overflow-hidden ${classificationContainer}`}>
+            <div className="px-3 py-2 border-b font-bold text-xs uppercase tracking-wider bg-white/50">Klasifikasi Potensi</div>
             <div className="px-3 py-4">
               <PotentialClassification
                 recCount={calc.meta.recommendedCount}
-                scores={calc.scores}       // opsional, hanya untuk breakdown tampilan
+                scores={calc.scores}
                 align="center"
               />
             </div>
@@ -315,7 +302,7 @@ function CompareCard({
       )}
 
       {!child && (
-        <div className="text-sm text-slate-500">Pilih anak dari kotak pencarian di atas.</div>
+        <div className="text-xs text-slate-500 italic py-2">Pilih anak dari kotak pencarian di atas untuk membandingkan statistik.</div>
       )}
     </div>
   )
@@ -327,15 +314,15 @@ function RowItem({
   const pct = Math.max(0, Math.min(100, ((score ?? 0) / 5) * 100))
   return (
     <tr className="hover:bg-slate-50 align-top">
-      <td className="px-3 py-2">{label}</td>
-      <td className="px-3 py-2">{value ?? <span className="text-slate-400">—</span>}</td>
-      <td className="px-3 py-2">
+      <td className="px-2 sm:px-3 py-2 font-medium">{label}</td>
+      <td className="px-2 sm:px-3 py-2 font-mono text-slate-600">{value ?? <span className="text-slate-400">—</span>}</td>
+      <td className="px-2 sm:px-3 py-2">
         <div className="flex flex-col gap-1">
           {score != null
-            ? <span className="inline-flex items-center w-fit rounded-full px-2 py-0.5 text-xs font-semibold bg-slate-100 text-slate-700">{score}</span>
+            ? <span className="text-xs font-bold">{score}</span>
             : <span className="text-slate-400 text-xs">—</span>
           }
-          <div className="h-1.5 w-40 max-w-full bg-slate-200 rounded-full overflow-hidden">
+          <div className="h-1 w-20 sm:w-32 bg-slate-200 rounded-full overflow-hidden">
             <div className={`h-full rounded-full ${colorClass} transition-[width] duration-500`} style={{ width: `${pct}%` }} />
           </div>
         </div>
