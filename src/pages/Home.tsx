@@ -33,10 +33,10 @@ export default function Home() {
       {/* --- HERO SECTION --- */}
       <div className="text-center mb-12 animate-fadeIn">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-3">
-          Selamat Datang di <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500">SiBakat.id</span>
+          Selamat Datang di <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500">SIBAKAT ID</span>
         </h1>
         <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-          Platform identifikasi bakat olahraga berbasis IPTEK untuk membantu pelatih dan guru menemukan potensi terbaik anak.
+          Platform analisis identifikasi bakat olahraga berbasis IPTEK untuk membantu pelatih dan guru menemukan potensi terbaik anak.
         </p>
       </div>
 

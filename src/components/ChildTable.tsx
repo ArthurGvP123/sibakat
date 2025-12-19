@@ -141,8 +141,8 @@ export default function ChildTable() {
       const now = new Date()
       const fname = `data-anak-${now.getTime()}.xlsx`
       XLSX.writeFile(wb, fname)
-      setToast('Ekspor Excel berhasil.')
-    } catch (e) { setToast('Gagal mengekspor Excel.') }
+      setToast('Unduh Data berhasil.')
+    } catch (e) { setToast('Gagal mengunduh data.') }
   }
 
   // Total kolom tabel
@@ -169,7 +169,7 @@ export default function ChildTable() {
             onClick={handleExportExcel}
             disabled={loading || filtered.length === 0}
           >
-            Ekspor Excel
+            Unduh Data
           </button>
 
           {/* Tombol Tambah Data */}
