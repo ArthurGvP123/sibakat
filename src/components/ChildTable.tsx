@@ -145,6 +145,7 @@ export default function ChildTable() {
     setSortOrder('asc')
   }
 
+  // --- LOGIKA UNDUH DATA PENUH (DIPERBARUI) ---
   function handleExportExcel() {
     try {
       const rows = filtered.map((r) => {
@@ -152,18 +153,40 @@ export default function ChildTable() {
         const recCount = calc.meta?.recommendedCount ?? 0
         const label = labelFromRecCount(recCount)
         const s = calc.scores
+        
+        // Perhitungan Total Skor Keberbakatan
         const totalScore = (s.ltbt ?? 0) + (s.lbb ?? 0) + (s.lt ?? 0) + (s.lk ?? 0) + (s.l40m ?? 0) + (s.mft ?? 0)
+
         return {
-          'Nama': r.nama, 'Asal Sekolah': r.asalSekolah || '—', 'Gender': r.gender, 'Usia': r.usia,
-          'Total Skor': totalScore, 'Klasifikasi': label, 
-          'Tinggi Badan': fmt(r.tinggiBadan), 'Tinggi Duduk': fmt(r.tinggiDuduk),
-          'Berat Badan': fmt(r.beratBadan), 'Rentang Langan': fmt(r.rentangLangan)
+          'Nama': r.nama,
+          'Asal Sekolah': r.asalSekolah || '—',
+          'Gender': r.gender,
+          'Usia': r.usia,
+          'Tinggi Badan (cm)': fmt(r.tinggiBadan),
+          'Tinggi Duduk (cm)': fmt(r.tinggiDuduk),
+          'Berat Badan (kg)': fmt(r.beratBadan),
+          'Rentang Langan (cm)': fmt(r.rentangLangan),
+          'LTBT (Lempar Tangkap)': fmt(r.ltbt),
+          'LBB (Lempar Bola Basket)': fmt(r.lbb),
+          'LT (Loncat Tegak)': fmt(r.lt),
+          'LK (Lari Kelincahan)': fmt(r.lk),
+          'L40M (Lari 40 Meter)': fmt(r.l40m),
+          'MFT (Lari Multitahap)': fmtMft(r.mftLevel, r.mftShuttle),
+          'Minat & Bakat': r.minatBakat || '—',
+          'Total Skor': totalScore,
+          'Klasifikasi': label
         }
       })
-      const ws = XLSX.utils.json_to_sheet(rows); const wb = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(wb, ws, 'Data Anak'); XLSX.writeFile(wb, `data-sibakat-${Date.now()}.xlsx`)
-      setToast('Unduh Data berhasil.')
-    } catch (e) { setToast('Gagal mengunduh data.') }
+
+      const ws = XLSX.utils.json_to_sheet(rows)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, 'Data Anak Sibakat')
+      XLSX.writeFile(wb, `data-sibakat-full-${Date.now()}.xlsx`)
+      setToast('Unduh Data Berhasil.')
+    } catch (e) { 
+      console.error(e)
+      setToast('Gagal mengunduh data.') 
+    }
   }
 
   const COLS = 19

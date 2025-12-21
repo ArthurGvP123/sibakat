@@ -611,7 +611,7 @@ function AntropometriCard({ form, setForm }: any) {
         <InputGroup label="Tinggi Badan (cm)" val={form.tinggiBadan} setVal={v => setForm({...form, tinggiBadan: v})} />
         <InputGroup label="Tinggi Duduk (cm)" val={form.tinggiDuduk} setVal={v => setForm({...form, tinggiDuduk: v})} />
         <InputGroup label="Berat Badan (kg)" val={form.beratBadan} setVal={v => setForm({...form, beratBadan: v})} />
-        <InputGroup label="Rentang Langan (cm)" val={form.rentangLangan} setVal={v => setForm({...form, rentangLangan: v})} />
+        <InputGroup label="Rentang Lengan (cm)" val={form.rentangLangan} setVal={v => setForm({...form, rentangLangan: v})} />
       </div>
     </div>
   )

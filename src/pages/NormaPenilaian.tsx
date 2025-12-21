@@ -521,29 +521,29 @@ export default function NormaPenilaian() {
             <table className="w-full text-sm">
               <thead className="bg-slate-50 text-slate-700 border-b border-slate-200">
                 <tr>
-                  <th className="px-6 py-4 text-left">Jumlah Cabang Direkomendasikan</th>
+                  <th className="px-6 py-4 text-left">Total Skor Keberbakatan</th>
                   <th className="px-6 py-4 text-left">Klasifikasi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 <tr className="hover:bg-emerald-50/50 transition-colors">
-                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">6</td>
+                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">≥27</td>
                   <td className="px-6 py-4"><span className="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-bold border border-emerald-200">Sangat Potensial</span></td>
                 </tr>
                 <tr className="hover:bg-green-50/50 transition-colors">
-                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">5</td>
+                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">23-26</td>
                   <td className="px-6 py-4"><span className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-xs font-bold border border-green-200">Potensial</span></td>
                 </tr>
                 <tr className="hover:bg-amber-50/50 transition-colors">
-                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">3 – 4</td>
+                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">19-22</td>
                   <td className="px-6 py-4"><span className="px-3 py-1.5 rounded-lg bg-amber-100 text-amber-700 text-xs font-bold border border-amber-200">Cukup Potensial</span></td>
                 </tr>
                 <tr className="hover:bg-orange-50/50 transition-colors">
-                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">1 – 2</td>
+                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">15-18</td>
                   <td className="px-6 py-4"><span className="px-3 py-1.5 rounded-lg bg-orange-100 text-orange-700 text-xs font-bold border border-orange-200">Kurang Potensial</span></td>
                 </tr>
                 <tr className="hover:bg-red-50/50 transition-colors">
-                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">0</td>
+                  <td className="px-6 py-4 font-mono text-slate-600 font-medium">≤14</td>
                   <td className="px-6 py-4"><span className="px-3 py-1.5 rounded-lg bg-red-100 text-red-700 text-xs font-bold border border-red-200">Tidak Potensial</span></td>
                 </tr>
               </tbody>
