@@ -160,16 +160,18 @@ export default function StatistikAnak() {
               {/* 1) PROFIL SINGKAT */}
               <div className="card p-6 flex flex-col gap-6 rounded-2xl">
                 <div className="flex items-center justify-between border-b pb-3 border-slate-100">
-                  <h3 className="font-bold text-slate-800">Profil Peserta</h3>
+                  <h3 className="font-bold text-slate-800">Profil Anak</h3>
                   <Link to="/data-anak" className="text-[10px] font-bold bg-slate-100 px-2 py-1 rounded-lg text-slate-600 hover:bg-slate-200 transition-colors">DETAIL TABEL</Link>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="">
                   <BItem label="Nama Lengkap" value={child.nama} />
                   <BItem label="Jenis Kelamin" value={child.gender} />
                   <BItem label="Usia" value={`${child.usia} Tahun`} />
                   <BItem label="Sekolah" value={child.asalSekolah} />
-                  <BItem label="Tinggi" value={child.tinggiBadan ? `${child.tinggiBadan} cm` : undefined} />
-                  <BItem label="Berat" value={child.beratBadan ? `${child.beratBadan} kg` : undefined} />
+                  <BItem label="Tinggi Badan" value={child.tinggiBadan ? `${child.tinggiBadan} cm` : undefined} />
+                  <BItem label="Tinggi Duduk" value={child.tinggiDuduk ? `${child.tinggiDuduk} cm` : undefined} />
+                  <BItem label="Berat Badan" value={child.beratBadan ? `${child.beratBadan} kg` : undefined} />
+                  <BItem label="Rentang Lengan" value={child.rentangLangan ? `${child.rentangLangan} cm` : undefined} />
                 </div>
               </div>
 

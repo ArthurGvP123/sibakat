@@ -1,9 +1,8 @@
 // src/lib/norma.ts
 // Mesin scoring 1–5 untuk 6 indikator + rekomendasi 42 cabang olahraga
 // Update:
-// - Threshold rekomendasi (default 75%) & top-N default 6
+// - Logika klasifikasi kini berbasis TOTAL SKOR KEBERBAKATAN (Penjumlahan 6 indikator)
 // - Mengembalikan meta {recommendedCount, totalEvaluated, threshold, limit, potentialCategory}
-// - Ekspor util potentialCategoryFromCount() sesuai aturan baru
 
 export type Gender = 'Putra' | 'Putri'
 
@@ -44,7 +43,7 @@ export type Recommendation = {
   target: { ltbt: number; lbb: number; lt: number; lk: number; l40m: number; mft: number }
 }
 
-// ====== Kategori Potensi (berdasarkan jumlah rekomendasi) ======
+// ====== Kategori Potensi (berdasarkan Total Skor) ======
 export type PotentialCategory =
   | 'Sangat Potensial'
   | 'Potensial'
@@ -52,18 +51,12 @@ export type PotentialCategory =
   | 'Kurang Potensial'
   | 'Tidak Potensial'
 
-/** Pemetaan jumlah rekomendasi → kategori sesuai aturan terbaru */
-export function potentialCategoryFromCount(count: number): PotentialCategory {
-  // Sangat Potensial jika rekomendasi >= 6
-  if (count >= 6) return 'Sangat Potensial'
-  
-  // Potensial jika rekomendasi tepat 5
-  if (count === 5) return 'Potensial'
-  
-  // Logika sisanya mengikuti pola sebelumnya
-  if (count >= 3) return 'Cukup Potensial'
-  if (count >= 1) return 'Kurang Potensial'
-  
+/** Pemetaan Total Skor Keberbakatan → kategori sesuai aturan terbaru */
+export function potentialCategoryFromScore(totalScore: number): PotentialCategory {
+  if (totalScore >= 27) return 'Sangat Potensial'
+  if (totalScore >= 23) return 'Potensial'
+  if (totalScore >= 19) return 'Cukup Potensial'
+  if (totalScore >= 15) return 'Kurang Potensial'
   return 'Tidak Potensial'
 }
 
@@ -307,12 +300,12 @@ const NORMA: NormMap = {
         { max: 16.92, score: 5 },
         { min: 16.93, max: 19.47, score: 4 },
         { min: 19.48, max: 22.03, score: 3 },
-        { min: 22.03, max: 24.57, score: 2 },
+        { min: 22.04, max: 24.57, score: 2 },
         { min: 24.58, score: 1 },
       ]),
       l40m: (v) => byLower(v, [
         { max: 5.99, score: 5 },
-        { min: 5.98, max: 6.76, score: 4 },
+        { min: 6.00, max: 6.76, score: 4 },
         { min: 6.77, max: 7.54, score: 3 },
         { min: 7.55, max: 8.30, score: 2 },
         { min: 8.31, score: 1 },
@@ -433,7 +426,7 @@ const NORMA: NormMap = {
       ]),
       lt: (v) => byHigher(v, [
         { min: 44, score: 5 },
-        { min: 27, max: 43, score: 4 },
+        { min: 38, max: 43, score: 4 },
         { min: 29, max: 37, score: 3 },
         { min: 22, max: 28, score: 2 },
         { max: 21, score: 1 },
@@ -441,7 +434,7 @@ const NORMA: NormMap = {
       lk: (v) => byLower(v, [
         { max: 16.60, score: 5 },
         { min: 16.61, max: 18.72, score: 4 },
-        { min: 19.73, max: 20.84, score: 3 },
+        { min: 18.73, max: 20.84, score: 3 },
         { min: 20.85, max: 22.97, score: 2 },
         { min: 22.98, score: 1 },
       ]),
@@ -473,7 +466,7 @@ const NORMA: NormMap = {
         { min: 7.50, max: 8.74, score: 4 },
         { min: 6.25, max: 7.49, score: 3 },
         { min: 5.00, max: 6.24, score: 2 },
-        { max: 5.49, score: 1 },
+        { max: 4.99, score: 1 },
       ]),
       lt: (v) => byHigher(v, [
         { min: 47, score: 5 },
@@ -530,7 +523,7 @@ const NORMA: NormMap = {
         { max: 14.89, score: 5 },
         { min: 14.90, max: 17.88, score: 4 },
         { min: 17.89, max: 20.19, score: 3 },
-        { min: 20.18, max: 22.12, score: 2 },
+        { min: 20.20, max: 22.12, score: 2 },
         { min: 22.13, score: 1 },
       ]),
       l40m: (v) => byLower(v, [
@@ -674,12 +667,24 @@ export function computeScoresAndRecommend(
   const top = recommended.slice(0, limit)
 
   const recommendedCount = recommended.length
+
+  /** * LOGIKA PERHITUNGAN BARU:
+   * Menjumlahkan skor keberbakatan (1-5) dari 6 indikator fisik.
+   */
+  const totalTalentScore = (scores.ltbt ?? 0) + 
+                           (scores.lbb  ?? 0) + 
+                           (scores.lt   ?? 0) + 
+                           (scores.lk   ?? 0) + 
+                           (scores.l40m ?? 0) + 
+                           (scores.mft  ?? 0)
+
   const meta = {
     threshold,
     limit,
     recommendedCount,
     totalEvaluated: all.length,
-    potentialCategory: potentialCategoryFromCount(recommendedCount) as PotentialCategory,
+    // Gunakan fungsi klasifikasi berbasis total skor terbaru
+    potentialCategory: potentialCategoryFromScore(totalTalentScore) as PotentialCategory,
   }
 
   return { scores, top, recommended, all, meta }
