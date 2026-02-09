@@ -175,10 +175,23 @@ export default function ChildTable() {
         const calc = calcForRow(r); const s = calc.scores
         const totalScore = (s.ltbt ?? 0) + (s.lbb ?? 0) + (s.lt ?? 0) + (s.lk ?? 0) + (s.l40m ?? 0) + (s.mft ?? 0)
         return {
-          'Nama': r.nama, 'Asal Sekolah': r.asalSekolah || '—', 'Gender': r.gender, 'Usia': r.usia,
-          'Total Skor': totalScore, 'Klasifikasi': labelFromTotalScore(totalScore), 
-          'Tinggi Badan (cm)': fmt(r.tinggiBadan), 'Tinggi Duduk (cm)': fmt(r.tinggiDuduk),
-          'Berat Badan (kg)': fmt(r.beratBadan), 'Rentang Langan (cm)': fmt(r.rentangLangan)
+          'Nama': r.nama, 
+          'Asal Sekolah': r.asalSekolah || '—', 
+          'Gender': r.gender, 
+          'Usia': r.usia,
+          'Total Skor': totalScore, 
+          'Klasifikasi': labelFromTotalScore(totalScore), 
+          'Tinggi Badan (cm)': fmt(r.tinggiBadan), 
+          'Tinggi Duduk (cm)': fmt(r.tinggiDuduk),
+          'Berat Badan (kg)': fmt(r.beratBadan), 
+          'Rentang Langan (cm)': fmt(r.rentangLangan),
+          'LTBT': fmt(r.ltbt),
+          'LBB': fmt(r.lbb),
+          'LT': fmt(r.lt),
+          'LK': fmt(r.lk),
+          'L40M': fmt(r.l40m),
+          'MFT': fmtMft(r.mftLevel, r.mftShuttle),
+          'Minat & Bakat': r.minatBakat || '—'
         }
       })
       const ws = XLSX.utils.json_to_sheet(rows); const wb = XLSX.utils.book_new()
