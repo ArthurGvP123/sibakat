@@ -79,7 +79,7 @@ export default function Login() {
         <div className="relative z-10 flex flex-col items-center">
           <img 
             src={logoSplash} 
-            alt="SiBakat Splash" 
+            alt="Talenta Sport Splash" 
             className="w-32 h-32 md:w-48 md:h-48 object-contain animate-splash"
           />
         </div>

@@ -98,7 +98,7 @@ export default function PetunjukPenggunaan() {
           {/* Intro */}
           <div id="intro" ref={sections.intro} className="scroll-mt-28 prose text-slate-600">
             <p className="lead text-lg text-slate-700 leading-relaxed">
-              Selamat datang di panduan lengkap <b>SiBakat.id</b>. Halaman ini berisi dokumentasi teknis tentang cara menggunakan seluruh fitur aplikasi untuk melakukan identifikasi bakat olahraga secara efektif dan terukur.
+              Selamat datang di panduan lengkap <b>Talenta Sport</b>. Halaman ini berisi dokumentasi teknis tentang cara menggunakan seluruh fitur aplikasi untuk melakukan identifikasi bakat olahraga secara efektif dan terukur.
             </p>
           </div>
 
@@ -242,7 +242,7 @@ export default function PetunjukPenggunaan() {
             <SectionHeader icon={FileOutput} title="5. Laporan & Ekspor" color="text-emerald-600" bg="bg-emerald-50" />
             <div className="space-y-4 text-slate-700 leading-relaxed">
               <p>
-                Aplikasi SiBakat.id mendukung pelaporan administrasi yang mudah. Anda dapat mengunduh seluruh database siswa beserta hasil analisisnya ke dalam format <b>Microsoft Excel (.xlsx)</b>.
+                Aplikasi Talenta Sport mendukung pelaporan administrasi yang mudah. Anda dapat mengunduh seluruh database siswa beserta hasil analisisnya ke dalam format <b>Microsoft Excel (.xlsx)</b>.
               </p>
               
               <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">

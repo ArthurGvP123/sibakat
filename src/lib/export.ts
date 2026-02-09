@@ -63,7 +63,7 @@ function downloadBuffer(buf: ArrayBuffer, filename: string) {
 }
 
 /** Ekspor seluruh daftar anak ke Excel (1 sheet) */
-export async function exportChildrenToExcel(children: ChildRow[], filename = 'sibakat-data-anak.xlsx') {
+export async function exportChildrenToExcel(children: ChildRow[], filename = 'talenta_sport-data-anak.xlsx') {
   if (!children || children.length === 0) throw new Error('Tidak ada data anak untuk diekspor.')
 
   const wb = new ExcelJS.Workbook()

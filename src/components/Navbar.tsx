@@ -50,7 +50,7 @@ export default function AppLayout({ children, title }: { children: ReactNode; ti
               <Link to="/" className="hidden sm:flex items-center group">
                 <img 
                   src={logoSibakat} 
-                  alt="SiBakat Logo" 
+                  alt="Talenta Sport Logo" 
                   className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
                 />
               </Link>
@@ -60,7 +60,7 @@ export default function AppLayout({ children, title }: { children: ReactNode; ti
             <Link to="/" className="sm:hidden flex items-center">
               <img 
                 src={logoSibakat} 
-                alt="SiBakat Logo" 
+                alt="Talenta Sport Logo" 
                 className="h-9 w-auto object-contain" 
               />
             </Link>

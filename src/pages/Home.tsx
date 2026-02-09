@@ -33,7 +33,7 @@ export default function Home() {
           />
           <img
             src={logoSibakat}
-            alt="Logo SiBakat"
+            alt="Logo Talenta Sport"
             className="h-24 sm:h-36 w-auto object-contain"
           />
         </div>
@@ -41,7 +41,7 @@ export default function Home() {
         {/* --- HERO SECTION --- */}
         <div className="text-center mb-12 animate-fadeIn">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-3">
-            Selamat Datang di <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500">SIBAKAT ID</span>
+            Selamat Datang di <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500">Talenta Sport</span>
           </h1>
           <p className="text-slate-600 text-lg max-w-2xl mx-auto">
             Platform analisis identifikasi bakat olahraga berbasis IPTEK untuk membantu pelatih dan guru menemukan potensi terbaik anak.
@@ -89,7 +89,7 @@ export default function Home() {
                 <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg mb-4 shadow-sm">2</div>
                 <h3 className="font-bold text-lg text-slate-800 mb-2 group-hover:text-emerald-600 transition-colors">Petunjuk Aplikasi</h3>
                 <p className="text-slate-600 text-sm mb-4 leading-relaxed">
-                  Pahami fitur-fitur aplikasi SiBakat.id untuk memaksimalkan proses manajemen data.
+                  Pahami fitur-fitur aplikasi Talenta Sport untuk memaksimalkan proses manajemen data.
                 </p>
                 <div className="text-sm font-semibold text-emerald-600 flex items-center gap-1 group-hover:gap-2 transition-all">
                   Lihat Petunjuk <ArrowRight size={16} />

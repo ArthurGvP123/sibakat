@@ -151,7 +151,7 @@ export default function Sidebar({
         <div className="px-4 py-5 border-b-2 border-slate-200">
           {/* Logo Klik-able */}
           <Link to="/" onClick={onClose} className="block hover:opacity-80 transition-opacity">
-            <img src={logoSibakat} alt="SiBakat Logo" className="h-10 w-auto object-contain" />
+            <img src={logoSibakat} alt="Talenta Sport Logo" className="h-10 w-auto object-contain" />
           </Link>
         </div>
 
