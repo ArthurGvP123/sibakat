@@ -182,7 +182,7 @@ export default function ChildTable() {
         }
       })
       const ws = XLSX.utils.json_to_sheet(rows); const wb = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(wb, ws, 'Data Talenta Sport'); XLSX.writeFile(wb, `data-sibakat-${Date.now()}.xlsx`)
+      XLSX.utils.book_append_sheet(wb, ws, 'Data Talenta Sport'); XLSX.writeFile(wb, `data-talentasport-${Date.now()}.xlsx`)
       setToast('Unduh Data berhasil.')
     } catch (e) { setToast('Gagal mengunduh data.') }
   }
